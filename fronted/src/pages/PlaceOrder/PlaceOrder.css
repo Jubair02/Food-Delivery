@@ -1,38 +1,135 @@
-.place-order{
+.place-order {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 50px;
     margin-top: 100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
+/* --- Left Side: Form --- */
+.place-order-left {
+    width: 100%;
+    max-width: max(30%, 500px);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
 }
-.place-order-left{
-   width: 100%;
-   max-width: max(30%,500px);
-}
-.place-order-left .title{
+
+.place-order-left .title {
     font-size: 30px;
     font-weight: 600;
-    margin-bottom: 50px;
-
+    margin-bottom: 30px;
+    color: #333;
 }
+
 .place-order-left input {
     margin-bottom: 15px;
     width: 100%;
-    padding: 10px;
+    padding: 12px 15px;
     border: 1px solid #c5c5c5;
     border-radius: 4px;
-    outline-color: tomato;
+    outline: none;
+    font-size: 15px;
+    transition: all 0.3s;
+    background-color: #fff;
 }
-.place-order-left .multi-fields{
+
+.place-order-left input:focus {
+    border-color: tomato;
+    box-shadow: 0 0 5px rgba(255, 99, 71, 0.2);
+}
+
+.place-order-left .multi-fields {
     display: flex;
     gap: 10px;
 }
-.place-order-right{
+
+/* --- Right Side: Totals --- */
+.place-order-right {
     width: 100%;
-    max-width: max(30%,500px);
-   
+    max-width: max(40%, 500px);
 }
-.place-order .cart-total button{
+
+.cart-total {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08); /* Card Effect */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cart-total h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.cart-total-details {
+    display: flex;
+    justify-content: space-between;
+    color: #555;
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+/* Styling for the Discount Row */
+.cart-total-details.discount {
+    color: #23831b;
+    font-weight: 600;
+}
+
+.cart-total-details.total {
+    font-size: 20px;
+    color: #333;
+    margin-top: 10px;
+}
+
+.cart-total hr {
+    margin: 10px 0;
+    border: none;
+    height: 1px;
+    background-color: #e2e2e2;
+}
+
+.place-order .cart-total button {
     margin-top: 30px;
+    border: none;
+    background-color: tomato;
+    color: white;
+    width: 100%;
+    padding: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.place-order .cart-total button:hover {
+    background-color: #ff4522;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 69, 34, 0.3);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 750px) {
+    .place-order {
+        flex-direction: column; /* Stack vertically on mobile */
+        margin-top: 50px;
+        gap: 30px;
+    }
+
+    .place-order-left, 
+    .place-order-right {
+        max-width: 100%; /* Take full width */
+    }
+
+    .place-order-left .title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
 }

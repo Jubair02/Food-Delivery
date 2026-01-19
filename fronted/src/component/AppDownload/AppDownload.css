@@ -1,24 +1,60 @@
-.app-download{
-    margin: auto auto;
-    margin-top: 100px;
-    font-size: max(3vw,22px);
+.app-download {
+    margin: 100px auto; /* Vertical margin 100px, Horizontal auto */
+    font-size: max(2vw, 20px); /* Responsive font size base */
     text-align: center;
     font-weight: 500;
+    /* Optional: Add a subtle background or border if you want it to stand out more */
+    /* background: linear-gradient(to bottom, transparent, #fcfcfc); */
 }
-.app-download-platforms{
-    
+
+/* Text Styling */
+.app-download p {
+    color: #333;
+    line-height: 1.4;
+    font-family: 'Outfit', sans-serif; /* Ensure you have a nice font loaded */
+}
+
+/* Highlight "KhaiDai App" */
+.app-download .highlight {
+    color: #ff6347; /* Tomato color matches your theme */
+    font-weight: 700;
+    font-size: 1.1em; /* Slightly larger than surrounding text */
+}
+
+/* Buttons Container */
+.app-download-platforms {
     display: flex;
     justify-content: center;
-    gap: max(2vw,10px);
+    gap: 20px; /* Fixed gap is often cleaner than vw for buttons */
     margin-top: 40px;
 }
-.app-download-platforms img{
-    width: max(30vw,120px);
-    max-width: 180px;
-    transition: 0.5s;
+
+/* Store Buttons */
+.app-download-platforms img {
+    width: 30vw; /* Responsive width */
+    max-width: 180px; /* Cap the size for desktop */
+    min-width: 120px; /* Ensure it's not too small on tiny phones */
+    height: auto;
+    transition: all 0.4s ease; /* Smooth transition */
     cursor: pointer;
+    border-radius: 8px; /* Slight rounding if the images are sharp squares */
 }
-.app-download-platforms img:hover{
-   transform: scale(1.05);
-  
+
+/* Hover Effect: Lift and Shadow */
+.app-download-platforms img:hover {
+    transform: translateY(-8px) scale(1.02); /* Moves up and grows slightly */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Soft shadow below */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .app-download {
+        margin-top: 60px; /* Less spacing on mobile */
+        font-size: 18px;
+    }
+
+    .app-download-platforms {
+        margin-top: 25px;
+        gap: 15px;
+    }
 }

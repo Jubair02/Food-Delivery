@@ -1,57 +1,151 @@
-.footer{
+/* Container */
+.footer {
     color: #d9d9d9;
-    background-color: #323232;
+    background-color: #1a1a1a; /* Darker, more modern grey */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding: 20px 8vw;
-    padding-top: 80px;
-    margin-top: 100px;
+    gap: 30px;
+    padding: 60px 8vw 20px; /* Adjusted padding */
+    margin-top: 80px;
 }
-.footer-content{
+
+/* Main Grid Layout */
+.footer-content {
     width: 100%;
     display: grid;
-    grid-template-columns: 2fr 1fr  1fr;
-    gap: 80px;
-    
+    grid-template-columns: 2fr 1fr 1fr; /* 2:1:1 Ratio */
+    gap: 60px;
 }
-.footer-content-left, .footer-content-center, .footer-content-right{
+
+/* Headings */
+.footer-content h2 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Left Section Specifics */
+.footer-content-left {
     display: flex;
     flex-direction: column;
     align-items: start;
     gap: 20px;
 }
-.footer-content-center li, .footer-content-right li ,.footer-content-left li{
-    list-style: none;
-    margin-bottom: 10px;
+
+.footer-logo {
+    max-width: 140px; /* Consistent logo size */
+}
+
+.footer-content-left p {
+    font-size: 0.95rem;
+    line-height: 1.6; /* Better readability */
+    color: #b0b0b0;
+}
+
+/* Social Icons */
+.footer-social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social-icons img {
+    width: 35px;
+    height: 35px;
     cursor: pointer;
+    border-radius: 50%;
+    transition: 0.3s ease;
+    border: 1px solid transparent;
+}
 
+/* Social Icon Hover Effect */
+.footer-social-icons img:hover {
+    transform: translateY(-5px); /* Floats up */
+    border-color: #fff;
+    filter: brightness(1.2);
 }
-.footer-content-center h2, .footer-content-right h2 ,.footer-content-left h2{
-    color: white;
+
+/* Center & Right Sections */
+.footer-content-center, 
+.footer-content-right {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
 }
-.footer-social-icons img{
-    width: 40px;
-    margin-right: 15px;
+
+.footer-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-.footer hr{
+
+.footer-content li {
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: 0.3s;
+    position: relative;
+    width: fit-content;
+}
+
+/* Link Hover Effect (Slide & Color) */
+.footer-content li:hover {
+    color: #ff6347; /* Tomato color (Food theme) - change to your brand color */
+    transform: translateX(5px);
+}
+
+/* Divider */
+.footer hr {
     width: 100%;
-    height: 2px;
-    margin: 20px 0;
-    background-color: grey;
+    height: 1px;
+    background: #444; /* Subtle line */
     border: none;
+    margin: 10px 0;
 }
-@media (max-width:750px) {
-    .footer-content{
-        display: flex;
-        flex-direction: column;
-        gap: 35px;
 
-    } 
-    .footer-copyright{
+/* Copyright Text */
+.footer-copyright {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* --- Responsive Design (Tablets & Mobile) --- */
+@media (max-width: 900px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr; /* 2 columns for tablet */
+        gap: 40px;
+    }
+    
+    .footer-content-left {
+        grid-column: span 2; /* Logo section takes full width */
+        align-items: center;
         text-align: center;
     }
+}
 
-      
+@media (max-width: 600px) {
+    .footer {
+        padding: 40px 5vw 20px;
+    }
+
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        text-align: center; /* Center align for mobile */
+    }
+
+    .footer-content-left, 
+    .footer-content-center, 
+    .footer-content-right {
+        align-items: center; /* Center items flex-wise */
+    }
+
+    .footer-social-icons {
+        margin-top: 10px;
+    }
 }
