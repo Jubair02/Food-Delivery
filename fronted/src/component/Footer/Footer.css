@@ -91,6 +91,19 @@
     width: fit-content;
 }
 
+/* Reset the buttons/links used inside the footer lists */
+.footer-content li button,
+.footer-content li a {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: inherit;
+}
+
 /* Link Hover Effect (Slide & Color) */
 .footer-content li:hover {
     color: #ff6347; /* Tomato color (Food theme) - change to your brand color */
@@ -111,6 +124,22 @@
     text-align: center;
     font-size: 0.85rem;
     color: #888;
+}
+
+/* Powered by */
+.footer-powered {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: -18px;
+}
+.footer-powered a {
+    color: #ff6347;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.footer-powered a:hover {
+    text-decoration: underline;
 }
 
 /* --- Responsive Design (Tablets & Mobile) --- */

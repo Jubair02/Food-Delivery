@@ -1,0 +1,10 @@
+node_modules
+.env
+*.log
+
+# Firebase service account key — NEVER commit this
+serviceAccountKey.json
+
+# Uploaded food images (keep the folder, ignore its contents)
+uploads/*
+!uploads/.gitkeep

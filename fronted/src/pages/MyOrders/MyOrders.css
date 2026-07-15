@@ -1,0 +1,74 @@
+.my-orders {
+    margin: 100px 0px 50px;
+    animation: fadeIn 0.5s;
+}
+
+.my-orders h2 {
+    font-weight: 600;
+    color: #333;
+}
+
+.my-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.my-orders-item {
+    display: grid;
+    grid-template-columns: 0.5fr 2fr 1fr 1fr 1.2fr;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+    padding: 15px 20px;
+    color: #454545;
+    border: 1px solid tomato;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.my-orders-item img {
+    width: 45px;
+}
+
+.my-orders-food {
+    font-weight: 500;
+}
+
+.my-orders-status span {
+    color: tomato;
+}
+
+.my-orders-status b {
+    font-weight: 500;
+    color: #454545;
+}
+
+/* Color-coded delivery status (updates live via Socket.IO) */
+.my-orders-status.status-pending span { color: #d97706; }
+.my-orders-status.status-preparing span { color: #7c3aed; }
+.my-orders-status.status-out-for-delivery span { color: #2563eb; }
+.my-orders-status.status-delivered span { color: #12805c; }
+.my-orders-status.status-cancelled span { color: #e63946; }
+
+.my-orders-empty,
+.my-orders-error {
+    margin-top: 30px;
+    color: #666;
+}
+
+.my-orders-error {
+    color: #e63946;
+}
+
+@media (max-width: 750px) {
+    .my-orders-item {
+        grid-template-columns: 1fr 2fr 1fr;
+        row-gap: 10px;
+        font-size: 13px;
+    }
+    .my-orders-item img {
+        width: 40px;
+    }
+}

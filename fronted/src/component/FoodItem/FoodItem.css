@@ -47,6 +47,10 @@
     cursor: pointer;
     border-radius: 50%;
 }
+.food-item-img-container .add img{
+    width: 100%;
+    display: block;
+}
 .food-item-counter{
     position: absolute;
     bottom: 15px;
@@ -60,4 +64,5 @@
 }
 .food-item-counter img{
     width: 30px;
+    display: block;
 }

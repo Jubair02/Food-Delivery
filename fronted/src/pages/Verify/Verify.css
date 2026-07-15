@@ -1,0 +1,22 @@
+.verify {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: #555;
+}
+
+.verify-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #e2e2e2;
+    border-top-color: tomato;
+    border-radius: 50%;
+    animation: verify-spin 0.9s linear infinite;
+}
+
+@keyframes verify-spin {
+    to { transform: rotate(360deg); }
+}

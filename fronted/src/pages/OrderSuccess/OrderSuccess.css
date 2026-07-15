@@ -1,0 +1,77 @@
+.order-success {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 18px;
+    padding: 40px 20px;
+    animation: fadeIn 0.5s;
+}
+
+.order-success-check {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #eafaf0;
+    color: #23831b;
+    font-size: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: order-pop 0.4s ease;
+}
+
+@keyframes order-pop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.order-success h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.order-success p {
+    color: #666;
+    max-width: 460px;
+    line-height: 1.6;
+}
+
+.order-success-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.order-success-actions button {
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.order-success-actions .primary {
+    border: none;
+    background: tomato;
+    color: #fff;
+}
+.order-success-actions .primary:hover {
+    background: #ff5733;
+    transform: translateY(-2px);
+}
+
+.order-success-actions .ghost {
+    background: transparent;
+    border: 1px solid tomato;
+    color: #49557e;
+}
+.order-success-actions .ghost:hover {
+    background: #fff2ef;
+}

@@ -46,6 +46,12 @@
     color: #ff4d4d;
     font-weight: bold;
     transition: transform 0.2s;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    text-align: left;
+    width: fit-content;
 }
 
 .cart-items-item .cross:hover {

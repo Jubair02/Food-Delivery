@@ -14,6 +14,16 @@ a{
   text-decoration: none;
   color: inherit;
 }
+/* Shared reset for buttons that wrap an icon image, so interactive
+   controls stay keyboard-accessible without looking like buttons. */
+.icon-button{
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
 .app{
   width: 80%;
   margin: auto;

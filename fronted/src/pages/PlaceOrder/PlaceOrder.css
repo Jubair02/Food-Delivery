@@ -95,6 +95,51 @@
     background-color: #e2e2e2;
 }
 
+.payment-method {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.payment-method-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #444;
+    transition: 0.2s;
+}
+.payment-option:hover {
+    border-color: tomato;
+}
+.payment-option.selected {
+    border-color: tomato;
+    background: #fff4f2;
+}
+.payment-option input {
+    accent-color: tomato;
+    cursor: pointer;
+}
+
+.place-order-error {
+    color: #e63946;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.place-order .cart-total button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .place-order .cart-total button {
     margin-top: 30px;
     border: none;
