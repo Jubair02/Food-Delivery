@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import './PlaceOrder.css';
 import { StoreContext } from '../../context/StoreContext';
 import { useToast } from '../../hooks/useToast';
@@ -9,6 +9,7 @@ const PlaceOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
+  const placedRef = useRef(false); // set once an order is placed, so the empty-cart guard won't hijack the success redirect
 
   // Passed from Cart. The discount amount is for display only — the server
   // recomputes it from the promo code so it can't be tampered with.
@@ -51,8 +52,10 @@ const PlaceOrder = () => {
   }
 
   // Redirect if the cart is empty, or if the user isn't signed in.
+  // Skip once an order has just been placed — otherwise clearing the cart
+  // (subtotal → 0) would bounce the user to /cart instead of the success page.
   useEffect(() => {
-    if (!authReady) return;
+    if (!authReady || placedRef.current) return;
     if (subtotal === 0) {
       navigate('/cart');
     } else if (!user) {
@@ -67,6 +70,7 @@ const PlaceOrder = () => {
 
     // Online payment: hand off to Stripe Checkout.
     if (result.session_url) {
+      placedRef.current = true;
       window.location.replace(result.session_url);
       return;
     }
@@ -75,6 +79,7 @@ const PlaceOrder = () => {
 
     // Cash on delivery (chosen by the customer, or Stripe not configured).
     if (result.success) {
+      placedRef.current = true;
       clearCart();
       navigate('/order-success', { state: { paid: false } });
     } else {
