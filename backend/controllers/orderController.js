@@ -48,7 +48,7 @@ export const placeOrder = async (req, res) => {
       orderItems.push({ foodId: id, name: food.name, price: food.price, quantity: qty });
     }
 
-    const discountRate = getDiscountRate(promoCode);
+    const discountRate = await getDiscountRate(promoCode);
     const discount = +(subtotal * discountRate).toFixed(2);
     const deliveryFee = subtotal === 0 ? 0 : DELIVERY_FEE;
     const amount = +(subtotal - discount + deliveryFee).toFixed(2);
@@ -132,6 +132,13 @@ export const placeOrder = async (req, res) => {
     console.error("placeOrder error:", err.message);
     res.status(500).json({ success: false, message: "Failed to place order" });
   }
+};
+
+// POST /api/order/promo  — public: validate a promo code and return its rate.
+// Codes stay server-side; the client only learns the discount % for a code it entered.
+export const checkPromo = async (req, res) => {
+  const rate = await getDiscountRate(req.body?.code);
+  res.json({ success: true, valid: rate > 0, rate });
 };
 
 // POST /api/order/verify  — auth  { orderId, success }

@@ -5,18 +5,20 @@ import { useToast } from '../../hooks/useToast';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount, user, setShowLogin } = useContext(StoreContext);
+  const { API_URL, cartItems, food_list, removeFromCart, getTotalCartAmount, user, setShowLogin } = useContext(StoreContext);
   const navigate = useNavigate();
   const toast = useToast();
 
-  // State for promo code logic
+  // Promo state — validated by the server, so any code in promos.js works.
   const [promoCode, setPromoCode] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
+  const [appliedCode, setAppliedCode] = useState('');   // the validated code, or ''
+  const [discountRate, setDiscountRate] = useState(0);   // e.g. 0.15
+  const [checking, setChecking] = useState(false);
 
   // Calculation Logic
   const subtotal = getTotalCartAmount();
   const deliveryFee = subtotal === 0 ? 0 : 2;
-  const discountAmount = promoApplied ? subtotal * 0.15 : 0;
+  const discountAmount = appliedCode ? subtotal * discountRate : 0;
   const finalTotal = subtotal - discountAmount + deliveryFee;
 
   const handleCheckout = () => {
@@ -26,17 +28,34 @@ const Cart = () => {
       return;
     }
     navigate('/order', {
-      state: { promoCode: promoApplied ? 'JUBAIR15' : '', discountAmount },
+      state: { promoCode: appliedCode, discountAmount },
     });
   };
 
-  const handlePromoSubmit = () => {
-    if (promoCode.trim().toUpperCase() === 'JUBAIR15') {
-      setPromoApplied(true);
-      toast.success('Coupon "JUBAIR15" applied — 15% off!');
-    } else {
-      setPromoApplied(false);
-      toast.error('Invalid promo code. Try again.');
+  const handlePromoSubmit = async () => {
+    const code = promoCode.trim();
+    if (!code) return;
+    setChecking(true);
+    try {
+      const res = await fetch(`${API_URL}/api/order/promo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const json = await res.json();
+      if (json.valid) {
+        setAppliedCode(code.toUpperCase());
+        setDiscountRate(json.rate);
+        toast.success(`Coupon "${code.toUpperCase()}" applied — ${Math.round(json.rate * 100)}% off!`);
+      } else {
+        setAppliedCode('');
+        setDiscountRate(0);
+        toast.error('Invalid promo code. Try again.');
+      }
+    } catch {
+      toast.error('Could not check the promo code. Try again.');
+    } finally {
+      setChecking(false);
     }
   };
 
@@ -84,10 +103,10 @@ const Cart = () => {
             <hr />
 
             {/* Conditionally Render Discount Row */}
-            {promoApplied && (
+            {appliedCode && (
               <>
                 <div className="cart-total-details discount">
-                  <p>Discount (15%)</p>
+                  <p>Discount ({Math.round(discountRate * 100)}%)</p>
                   <p>-${discountAmount.toFixed(2)}</p>
                 </div>
                 <hr />
@@ -120,7 +139,7 @@ const Cart = () => {
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
               />
-              <button onClick={handlePromoSubmit}>Submit</button>
+              <button onClick={handlePromoSubmit} disabled={checking}>{checking ? '…' : 'Submit'}</button>
             </div>
           </div>
         </div>

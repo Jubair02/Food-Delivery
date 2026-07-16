@@ -62,7 +62,7 @@ const Footer = () => {
       <hr />
 
       <p className="footer-copyright">
-        Copyright 2024 © Khaidai.com - All Rights Reserved.
+        Copyright 2026 © Khaidai.com - All Rights Reserved.
       </p>
 
       <p className="footer-powered">

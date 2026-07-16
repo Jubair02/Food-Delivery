@@ -6,6 +6,7 @@ import AdminLayout from './components/AdminLayout'
 import Dashboard from './pages/Dashboard'
 import Orders from './pages/Orders'
 import Menu from './pages/Menu'
+import Promos from './pages/Promos'
 import Customers from './pages/Customers'
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
         <Route path='dashboard' element={<Dashboard />} />
         <Route path='orders' element={<Orders />} />
         <Route path='menu' element={<Menu />} />
+        <Route path='promos' element={<Promos />} />
         <Route path='customers' element={<Customers />} />
         <Route path='*' element={<Navigate to='dashboard' replace />} />
       </Route>

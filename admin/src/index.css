@@ -148,6 +148,13 @@ a { text-decoration: none; color: inherit; }
 .toast-error { border-left-color: #e63946; } .toast-error .toast-icon { background: #e63946; }
 .toast-info { border-left-color: var(--accent); } .toast-info .toast-icon { background: var(--accent); }
 .customers-table .table-row { grid-template-columns: 2.2fr 1.2fr 1fr 0.7fr 1fr 1fr; }
+
+/* Promos */
+.promo-page { display: grid; grid-template-columns: 360px 1fr; gap: 22px; align-items: start; max-width: 1100px; }
+.promo-row { grid-template-columns: 2fr 1fr 1.2fr 100px; }
+.promo-row.is-disabled .promo-code, .promo-row.is-disabled .num { opacity: 0.5; }
+.promo-code { font-weight: 700; letter-spacing: 0.5px; font-family: monospace; font-size: 15px; }
+.promo-row .icon-btn { width: auto; padding: 0 12px; font-size: 12px; font-weight: 600; }
 .cust-cell { display: flex; flex-direction: column; }
 .cust-name { font-weight: 600; }
 .cust-email { font-size: 12px; color: var(--muted); }
@@ -191,7 +198,7 @@ a { text-decoration: none; color: inherit; }
 
 /* ── Responsive ────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .menu-page { grid-template-columns: 1fr; }
+  .menu-page, .promo-page { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .sidebar { position: fixed; bottom: 0; top: auto; left: 0; right: 0; width: 100%; height: auto; flex-direction: row; align-items: center; padding: 8px; border-right: none; border-top: 1px solid var(--border); z-index: 20; }
