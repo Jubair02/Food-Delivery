@@ -1,0 +1,39 @@
+# Render Blueprint for the Food Delivery backend (Express + Socket.IO).
+# Render supports persistent Node processes + WebSockets, so real-time works.
+#
+# Deploy: Render Dashboard → New → Blueprint → pick this repo. Then fill in the
+# env vars marked `sync: false` (they are secrets, entered in the dashboard).
+services:
+  - type: web
+    name: food-delivery-backend
+    runtime: node
+    rootDir: Food-Delivery/backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # --- secrets: set these in the Render dashboard ---
+      - key: MONGODB_URI
+        sync: false
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      # Firebase Admin via the inline trio (NOT the JSON file — it's gitignored).
+      # Paste FIREBASE_PRIVATE_KEY with its \n escapes intact on one line.
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      # Set these to your deployed Vercel URLs (CORS + Socket.IO origins).
+      - key: CLIENT_URL
+        sync: false
+      - key: ADMIN_CLIENT_URL
+        sync: false
+      - key: DELIVERY_FEE
+        value: "2"
