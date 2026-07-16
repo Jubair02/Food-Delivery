@@ -7,7 +7,7 @@ services:
   - type: web
     name: food-delivery-backend
     runtime: node
-    rootDir: Food-Delivery/backend
+    rootDir: backend
     plan: free
     buildCommand: npm install
     startCommand: npm start
