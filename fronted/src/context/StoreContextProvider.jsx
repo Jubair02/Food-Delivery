@@ -18,8 +18,9 @@ staticFoodList.forEach((f) => {
 // Resolve an image for a menu item: prefer the bundled asset, otherwise
 // fall back to a file uploaded through the admin panel (served by the API).
 const resolveImage = (item) => {
-  if (imageById[item._id]) return imageById[item._id];
-  if (item.image) return `${API_URL}/images/${item.image}`;
+  if (imageById[item._id]) return imageById[item._id]; // bundled seed image
+  if (item.image && /^https?:\/\//.test(item.image)) return item.image; // Cloudinary / remote URL
+  if (item.image) return `${API_URL}/images/${item.image}`; // local uploaded filename
   return "";
 };
 

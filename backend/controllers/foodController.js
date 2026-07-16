@@ -1,8 +1,14 @@
 import fs from "fs";
 import path from "path";
 import foodModel from "../models/foodModel.js";
-import { UPLOAD_DIR } from "../config/upload.js";
+import { UPLOAD_DIR, storedImageValue } from "../config/upload.js";
 import { emitChange } from "../config/io.js";
+
+// Best-effort local file cleanup (skips Cloudinary/remote URLs).
+const removeLocalImage = (image) => {
+  if (!image || /^https?:\/\//.test(image)) return;
+  fs.promises.unlink(path.join(UPLOAD_DIR, image)).catch(() => {});
+};
 
 // GET /api/food/list  — public (storefront): only enabled items
 export const listFood = async (req, res) => {
@@ -59,7 +65,7 @@ export const addFood = async (req, res) => {
       price: Number(price),
       category,
       description: description || "",
-      image: req.file.filename,
+      image: storedImageValue(req.file),
     });
 
     emitChange("menu:changed");
@@ -84,11 +90,11 @@ export const updateFood = async (req, res) => {
     if (category !== undefined) food.category = category;
     if (price !== undefined && price !== "") food.price = Number(price);
 
-    // If a new image was uploaded, swap it in and best-effort remove the old file.
+    // If a new image was uploaded, swap it in and best-effort remove the old local file.
     if (req.file) {
-      const oldPath = path.join(UPLOAD_DIR, food.image);
-      food.image = req.file.filename;
-      fs.promises.unlink(oldPath).catch(() => {});
+      const oldImage = food.image;
+      food.image = storedImageValue(req.file);
+      removeLocalImage(oldImage);
     }
 
     await food.save();
@@ -109,9 +115,8 @@ export const removeFood = async (req, res) => {
       return res.status(404).json({ success: false, message: "Food not found" });
     }
 
-    // Best-effort cleanup of an uploaded image file (bundled seeds won't exist here).
-    const filePath = path.join(UPLOAD_DIR, food.image);
-    fs.promises.unlink(filePath).catch(() => {});
+    // Best-effort cleanup of a local uploaded image (skips remote/Cloudinary URLs).
+    removeLocalImage(food.image);
 
     await foodModel.findByIdAndDelete(id);
     emitChange("menu:changed");

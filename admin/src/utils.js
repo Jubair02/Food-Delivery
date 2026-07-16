@@ -4,7 +4,11 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 export const FALLBACK_IMG =
   'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect width="60" height="60" rx="8" fill="%23eef1f5"/><text x="50%25" y="55%25" font-size="9" fill="%239aa5b1" text-anchor="middle" font-family="sans-serif">no img</text></svg>'
 
-export const foodImageUrl = (image) => (image ? `${API_URL}/images/${image}` : FALLBACK_IMG)
+export const foodImageUrl = (image) => {
+  if (!image) return FALLBACK_IMG
+  if (/^https?:\/\//.test(image)) return image // Cloudinary / remote URL
+  return `${API_URL}/images/${image}` // local uploaded filename
+}
 
 export const money = (n) => `$${Number(n || 0).toFixed(2)}`
 
