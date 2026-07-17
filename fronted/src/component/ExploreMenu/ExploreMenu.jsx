@@ -17,7 +17,7 @@ const ExploreMenu = ({category,setCategory}) => {
                     className="explore-menu-list-item"
                     aria-pressed={category===item.menu_name}
                 >
-                    <img className={category===item.menu_name?"active":"" } src={item.menu_image} alt="" />
+                    <img className={category===item.menu_name?"active":"" } src={item.menu_image} onError={(e)=>{ if (item.menu_image_local) e.currentTarget.src = item.menu_image_local }} alt="" />
                     <p>{item.menu_name}</p>
                 </button>
             )

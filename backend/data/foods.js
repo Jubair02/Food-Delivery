@@ -1,8 +1,15 @@
-// Menu seed data. Mirrors the frontend's food_list so ids ("1".."32") match,
-// which lets the frontend keep resolving the bundled images by id.
+// Menu seed data. Images are served from Cloudinary (uploaded via
+// scripts/uploadAssets.js). If CLOUDINARY_CLOUD_NAME isn't set, we fall back to
+// the bare filename (local-disk / bundled resolution).
 const DESC = "Food provides essential nutrients for overall health and well-being";
 
-export const foods = [
+const CLOUD = process.env.CLOUDINARY_CLOUD_NAME;
+const img = (file) =>
+  CLOUD
+    ? `https://res.cloudinary.com/${CLOUD}/image/upload/food-delivery/seed/${file.replace(/\.png$/, "")}.png`
+    : file;
+
+const rawFoods = [
   { _id: "1", name: "Greek salad", price: 12, category: "Salad", image: "food_1.png", description: DESC },
   { _id: "2", name: "Veg salad", price: 18, category: "Salad", image: "food_2.png", description: DESC },
   { _id: "3", name: "Clover Salad", price: 16, category: "Salad", image: "food_3.png", description: DESC },
@@ -36,3 +43,6 @@ export const foods = [
   { _id: "31", name: "Somen Noodles", price: 20, category: "Noodles", image: "food_31.png", description: DESC },
   { _id: "32", name: "Cooked Noodles", price: 15, category: "Noodles", image: "food_32.png", description: DESC },
 ];
+
+// Rewrite each image to its Cloudinary URL (or leave the filename as fallback).
+export const foods = rawFoods.map((f) => ({ ...f, image: img(f.image) }));

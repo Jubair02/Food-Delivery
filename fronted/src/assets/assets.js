@@ -82,39 +82,21 @@ export const assets = {
     parcel_icon
 }
 
+// Menu-category images are served from Cloudinary; the bundled import stays as
+// an onError fallback (used if Cloudinary is unreachable). Cloud name is public.
+const CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "h0t0tvbl";
+const menuImg = (name) => `https://res.cloudinary.com/${CLOUD}/image/upload/food-delivery/seed/${name}.png`;
+
 export const menu_list = [
-    {
-        menu_name: "Salad",
-        menu_image: menu_1
-    },
-    {
-        menu_name: "Rolls",
-        menu_image: menu_2
-    },
-    {
-        menu_name: "Deserts",
-        menu_image: menu_3
-    },
-    {
-        menu_name: "Sandwich",
-        menu_image: menu_4
-    },
-    {
-        menu_name: "Cake",
-        menu_image: menu_5
-    },
-    {
-        menu_name: "Pure Veg",
-        menu_image: menu_6
-    },
-    {
-        menu_name: "Pasta",
-        menu_image: menu_7
-    },
-    {
-        menu_name: "Noodles",
-        menu_image: menu_8
-    }]
+    { menu_name: "Salad", menu_image: menuImg("menu_1"), menu_image_local: menu_1 },
+    { menu_name: "Rolls", menu_image: menuImg("menu_2"), menu_image_local: menu_2 },
+    { menu_name: "Deserts", menu_image: menuImg("menu_3"), menu_image_local: menu_3 },
+    { menu_name: "Sandwich", menu_image: menuImg("menu_4"), menu_image_local: menu_4 },
+    { menu_name: "Cake", menu_image: menuImg("menu_5"), menu_image_local: menu_5 },
+    { menu_name: "Pure Veg", menu_image: menuImg("menu_6"), menu_image_local: menu_6 },
+    { menu_name: "Pasta", menu_image: menuImg("menu_7"), menu_image_local: menu_7 },
+    { menu_name: "Noodles", menu_image: menuImg("menu_8"), menu_image_local: menu_8 },
+]
 
 export const food_list = [
     {
