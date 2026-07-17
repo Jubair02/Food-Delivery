@@ -153,6 +153,25 @@ const StoreContextProvider = (props) => {
     }
   };
 
+  const uploadAvatar = async (file) => {
+    const token = await getToken();
+    if (!token) return { success: false, message: "Please sign in first." };
+    try {
+      const body = new FormData();
+      body.append("image", file);
+      const res = await fetch(`${API_URL}/api/user/avatar`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }, // no Content-Type for FormData
+        body,
+      });
+      const json = await res.json();
+      if (json.success) setProfile(json.data);
+      return json;
+    } catch {
+      return { success: false, message: "Could not reach the server." };
+    }
+  };
+
   // ── Cart ──────────────────────────────────────────────
   const addToCart = (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
@@ -213,6 +232,7 @@ const StoreContextProvider = (props) => {
     authReady,
     profile,
     saveProfile,
+    uploadAvatar,
     socket,
     getToken,
     logout,

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import './Profile.css';
 import { StoreContext } from '../../context/StoreContext';
 import { useToast } from '../../hooks/useToast';
@@ -10,38 +10,57 @@ const EMPTY = {
 };
 
 const Profile = () => {
-  const { user, authReady, profile, saveProfile } = useContext(StoreContext);
+  const { API_URL, user, authReady, profile, saveProfile, uploadAvatar } = useContext(StoreContext);
   const navigate = useNavigate();
   const toast = useToast();
+  const fileRef = useRef(null);
 
   const [name, setName] = useState('');
   const [address, setAddress] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [syncedProfile, setSyncedProfile] = useState(null);
 
   // Only signed-in users have a profile.
-  useEffect(() => {
+  React.useEffect(() => {
     if (authReady && !user) navigate('/');
   }, [authReady, user, navigate]);
 
-  // Populate the form once the profile arrives (render-time sync on change —
-  // React's recommended alternative to a state-setting effect).
+  // Populate the form once the profile arrives (render-time sync).
   if (profile && profile !== syncedProfile) {
     setSyncedProfile(profile);
     setName(profile.name || '');
     setAddress({ ...EMPTY, ...(profile.address || {}) });
   }
 
+  const avatarSrc = (() => {
+    const a = profile?.avatar;
+    if (!a) return '';
+    if (/^https?:\/\//.test(a)) return a;
+    return `${API_URL}/images/${a}`;
+  })();
+
+  const initials = (name || user?.email || 'U').trim().charAt(0).toUpperCase();
+
   const onAddressChange = (e) =>
     setAddress((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const onPickAvatar = async (e) => {
+    const file = e.target.files[0];
+    e.target.value = ''; // allow re-selecting the same file later
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast.error('Please choose an image file.'); return; }
+    setUploading(true);
+    const result = await uploadAvatar(file);
+    setUploading(false);
+    if (result.success) toast.success('Profile picture updated.');
+    else toast.error(result.message || 'Failed to update picture.');
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    const result = await saveProfile({
-      name,
-      address: { ...address, email: user?.email || '' },
-    });
+    const result = await saveProfile({ name, address: { ...address, email: user?.email || '' } });
     setSaving(false);
     if (result.success) toast.success('Profile saved.');
     else toast.error(result.message || 'Failed to save profile.');
@@ -49,11 +68,37 @@ const Profile = () => {
 
   return (
     <div className='profile'>
-      <h2>My Profile</h2>
-      <p className='profile-sub'>
-        Manage your details. Your delivery address will auto-fill at checkout.
-      </p>
+      {/* Hero card: avatar + identity */}
+      <div className='profile-hero'>
+        <div className='profile-avatar-wrap'>
+          <div className='profile-avatar'>
+            {avatarSrc
+              ? <img src={avatarSrc} alt='Profile' />
+              : <span className='profile-avatar-initials'>{initials}</span>}
+            {uploading && <div className='profile-avatar-loading'>…</div>}
+          </div>
+          <button
+            type='button'
+            className='profile-avatar-btn'
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            aria-label='Change profile picture'
+            title='Change profile picture'
+          >
+            <svg viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+              <path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z' /><circle cx='12' cy='13' r='4' />
+            </svg>
+          </button>
+          <input ref={fileRef} type='file' accept='image/*' hidden onChange={onPickAvatar} />
+        </div>
+        <div className='profile-hero-info'>
+          <h2>{name || 'Your profile'}</h2>
+          <p>{user?.email}</p>
+          <span className='profile-hint-inline'>Tap the camera to change your photo</span>
+        </div>
+      </div>
 
+      {/* Details */}
       <form className='profile-card' onSubmit={onSubmit}>
         <div className='profile-section'>
           <h3>Account</h3>
@@ -64,7 +109,7 @@ const Profile = () => {
           <div className='profile-field'>
             <label htmlFor='pf-email'>Email</label>
             <input id='pf-email' type='email' value={user?.email || ''} disabled />
-            <span className='profile-hint'>Email is managed by your sign-in account.</span>
+            <span className='profile-hint'>Managed by your sign-in account.</span>
           </div>
         </div>
 

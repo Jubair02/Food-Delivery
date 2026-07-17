@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
     _id: { type: String, required: true }, // Firebase UID
     email: { type: String, required: true },
     name: { type: String, default: "" },
+    avatar: { type: String, default: "" }, // Cloudinary URL (or local filename)
     address: { type: addressSchema, default: () => ({}) },
     lastLoginAt: { type: Date, default: Date.now },
   },

@@ -10,7 +10,7 @@ const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
 
-  const { cartItems, user, logout, setShowLogin, searchQuery, setSearchQuery } =
+  const { cartItems, user, profile, API_URL, logout, setShowLogin, searchQuery, setSearchQuery } =
     useContext(StoreContext)
   const navigate = useNavigate()
   const profileRef = useRef(null)
@@ -56,6 +56,9 @@ const Navbar = () => {
   const doLogout = () => { setProfileOpen(false); logout() }
 
   const initial = (user?.displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()
+  const avatarUrl = profile?.avatar
+    ? (/^https?:\/\//.test(profile.avatar) ? profile.avatar : `${API_URL}/images/${profile.avatar}`)
+    : ''
 
   return (
     <header className='navbar'>
@@ -116,7 +119,7 @@ const Navbar = () => {
                 aria-expanded={profileOpen}
                 onClick={() => setProfileOpen((o) => !o)}
               >
-                {initial}
+                {avatarUrl ? <img className='avatar-img' src={avatarUrl} alt='Account' /> : initial}
               </button>
               {profileOpen && (
                 <ul className='navbar-profile-dropdown' role='menu'>

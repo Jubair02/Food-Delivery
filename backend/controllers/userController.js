@@ -1,5 +1,6 @@
 import userModel from "../models/userModel.js";
 import { emitChange } from "../config/io.js";
+import { storedImageValue } from "../config/upload.js";
 
 const ADDRESS_FIELDS = [
   "firstName", "lastName", "email", "street",
@@ -44,5 +45,24 @@ export const updateMe = async (req, res) => {
   } catch (err) {
     console.error("updateMe error:", err.message);
     res.status(500).json({ success: false, message: "Failed to update profile" });
+  }
+};
+
+// POST /api/user/avatar  — auth (multipart, field "image")
+export const updateAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image uploaded" });
+    }
+    const avatar = storedImageValue(req.file);
+    const user = await userModel
+      .findByIdAndUpdate(req.user.uid, { $set: { avatar } }, { new: true, upsert: true })
+      .lean();
+
+    emitChange("customers:changed");
+    res.json({ success: true, message: "Profile picture updated", data: user });
+  } catch (err) {
+    console.error("updateAvatar error:", err.message);
+    res.status(500).json({ success: false, message: "Failed to update picture" });
   }
 };
