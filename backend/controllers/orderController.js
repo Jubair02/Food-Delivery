@@ -177,6 +177,66 @@ export const myOrders = async (req, res) => {
   }
 };
 
+// Why a customer can no longer pull an order back, phrased for the customer.
+const TOO_LATE = {
+  Preparing: "already being prepared",
+  "Out for delivery": "already out for delivery",
+  Delivered: "already delivered",
+};
+
+/**
+ * POST /api/order/cancel  — auth required  { orderId }
+ *
+ * A customer may only cancel while the order is still "Pending". Once the
+ * kitchen accepts it the food is committed, so the window closes. The current
+ * status is read from the DB and never trusted from the client, so a page left
+ * open cannot cancel an order that has since moved on.
+ */
+export const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    // Checked here so a malformed id is a 404 rather than a cast error.
+    if (!/^[a-f\d]{24}$/i.test(String(orderId || ""))) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    // Conditional update: the "Pending" guard is part of the query, so two
+    // concurrent cancels (or a cancel racing the admin) cannot both win.
+    const cancelled = await orderModel.findOneAndUpdate(
+      { _id: orderId, userId: req.user.uid, status: "Pending" },
+      { status: "Cancelled" },
+      { new: true }
+    );
+
+    if (!cancelled) {
+      // Nothing matched — separate "not yours / gone" from "too late".
+      const existing = await orderModel.findOne({ _id: orderId, userId: req.user.uid }).lean();
+      if (!existing) {
+        return res.status(404).json({ success: false, message: "Order not found" });
+      }
+      if (existing.status === "Cancelled") {
+        return res.json({ success: true, message: "Order already cancelled", data: existing });
+      }
+      // 409: the request was valid, the order's state just moved past it.
+      return res.status(409).json({
+        success: false,
+        message: `Your order is ${TOO_LATE[existing.status] || `already ${existing.status.toLowerCase()}`} and can no longer be cancelled.`,
+        data: existing,
+      });
+    }
+
+    emitChange("orders:changed"); // admin dashboards
+    emitToUser(cancelled.userId, "order:status", {
+      orderId: String(cancelled._id),
+      status: cancelled.status,
+    });
+    res.json({ success: true, message: "Order cancelled", data: cancelled });
+  } catch (err) {
+    console.error("cancelOrder error:", err.message);
+    res.status(500).json({ success: false, message: "Failed to cancel order" });
+  }
+};
+
 // GET /api/order/list  — admin: every order, newest first
 export const listOrders = async (req, res) => {
   try {

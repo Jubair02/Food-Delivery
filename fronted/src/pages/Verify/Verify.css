@@ -1,22 +1,87 @@
+/* ═══════════════════════════════════════════════════════════════
+   Payment verification — a two-second interstitial, so it stays
+   precise rather than eventful. The indeterminate bar reuses the
+   rail motif from the order tracker instead of a generic spinner.
+   ═══════════════════════════════════════════════════════════════ */
+
 .verify {
-    min-height: 60vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    color: #555;
+    min-height: 62dvh; /* dvh, so mobile browser chrome doesn't shift it */
+    padding: 40px 0 80px;
 }
 
-.verify-spinner {
-    width: 60px;
-    height: 60px;
-    border: 5px solid #e2e2e2;
-    border-top-color: tomato;
-    border-radius: 50%;
-    animation: verify-spin 0.9s linear infinite;
+.vf-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 34px 30px 30px;
+    background: var(--fd-paper);
+    border: 1px solid var(--fd-line);
+    border-radius: 18px;
+    box-shadow: var(--fd-lift);
+    text-align: center;
+    color: var(--fd-ink-2);
 }
 
-@keyframes verify-spin {
-    to { transform: rotate(360deg); }
+.vf-card h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--fd-ink);
+}
+
+/* Indeterminate track — a segment sweeping a hairline rail. */
+.vf-track {
+    position: relative;
+    height: 3px;
+    margin: 24px 0 22px;
+    border-radius: 3px;
+    background: var(--fd-line);
+    overflow: hidden;
+}
+
+.vf-track-run {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 38%;
+    border-radius: 3px;
+    background: var(--fd-accent);
+    animation: vf-sweep 1.4s cubic-bezier(.65, .05, .36, 1) infinite;
+}
+
+@keyframes vf-sweep {
+    0% { transform: translateX(-105%); }
+    100% { transform: translateX(300%); }
+}
+
+.vf-note {
+    font-size: 13.5px;
+    line-height: 1.55;
+    max-width: 34ch;
+    margin: 0 auto;
+    text-wrap: pretty;
+}
+
+.vf-slow {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--fd-tear);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--fd-ink-3);
+    animation: fadeIn .4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* A static, clearly-unfinished bar reads as "working" without motion. */
+    .vf-track-run {
+        animation: none;
+        width: 45%;
+        transform: none;
+    }
+
+    .vf-slow { animation: none; }
 }

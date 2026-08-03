@@ -1,180 +1,437 @@
+/* ═══════════════════════════════════════════════════════════════
+   Checkout — the ticket being filled in. Delivery details on the
+   left, the receipt (now with line items) on the right, matching
+   the cart and the orders page. Palette from --fd-* in index.css.
+   ═══════════════════════════════════════════════════════════════ */
+
 .place-order {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 50px;
-    margin-top: 100px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --po-pad: 24px;
+    max-width: 1080px;
+    margin: 104px auto 80px;
+    color: var(--fd-ink-2);
+    font-variant-numeric: tabular-nums;
+    animation: fadeIn .5s;
 }
 
-/* --- Left Side: Form --- */
-.place-order-left {
-    width: 100%;
-    max-width: max(30%, 500px);
-    background: #fff;
-    padding: 20px;
+/* Text inputs signal focus with their own border and ring, so the outline is
+   reserved for links and buttons where nothing else would show it. */
+.place-order a:focus-visible,
+.place-order button:focus-visible {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 3px;
     border-radius: 8px;
 }
 
-.place-order-left .title {
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-.place-order-left input {
-    margin-bottom: 15px;
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #c5c5c5;
-    border-radius: 4px;
-    outline: none;
-    font-size: 15px;
-    transition: all 0.3s;
-    background-color: #fff;
-}
-
-.place-order-left input:focus {
-    border-color: tomato;
-    box-shadow: 0 0 5px rgba(255, 99, 71, 0.2);
-}
-
-.place-order-left .multi-fields {
-    display: flex;
-    gap: 10px;
-}
-
-/* --- Right Side: Totals --- */
-.place-order-right {
-    width: 100%;
-    max-width: max(40%, 500px);
-}
-
-.cart-total {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08); /* Card Effect */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.cart-total h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.cart-total-details {
-    display: flex;
-    justify-content: space-between;
-    color: #555;
-    font-size: 16px;
-    margin: 5px 0;
-}
-
-/* Styling for the Discount Row */
-.cart-total-details.discount {
-    color: #23831b;
-    font-weight: 600;
-}
-
-.cart-total-details.total {
-    font-size: 20px;
-    color: #333;
-    margin-top: 10px;
-}
-
-.cart-total hr {
-    margin: 10px 0;
-    border: none;
+.po-sr {
+    position: absolute;
+    width: 1px;
     height: 1px;
-    background-color: #e2e2e2;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
-.payment-method {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+/* ── Header and step rail ─────────────────────────────────── */
+.po-head {
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--fd-line);
 }
-.payment-method-title {
+
+.po-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--fd-ink-3);
+    transition: color .18s ease;
+}
+
+.po-back:hover { color: var(--fd-ink); }
+
+.po-head h1 {
+    font-size: 38px;
     font-weight: 600;
-    color: #333;
-    margin-bottom: 4px;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--fd-ink);
 }
-.payment-option {
+
+.po-steps {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
-    padding: 12px 15px;
-    border: 1px solid #d5d5d5;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
-    color: #444;
-    transition: 0.2s;
-}
-.payment-option:hover {
-    border-color: tomato;
-}
-.payment-option.selected {
-    border-color: tomato;
-    background: #fff4f2;
-}
-.payment-option input {
-    accent-color: tomato;
-    cursor: pointer;
+    margin-top: 18px;
+    list-style: none;
 }
 
-.place-order-error {
-    color: #e63946;
-    font-size: 14px;
+.po-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    letter-spacing: .04em;
+    color: var(--fd-ink-3);
+}
+
+.po-step:not(:last-child)::after {
+    content: '';
+    width: 36px;
+    height: 1px;
+    margin-left: 4px;
+    background: var(--fd-line);
+}
+
+.po-step-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--fd-paper);
+    border: 2px solid var(--fd-line);
+}
+
+.po-step.is-done .po-step-dot,
+.po-step.is-now .po-step-dot {
+    background: var(--fd-accent);
+    border-color: var(--fd-accent);
+}
+
+.po-step.is-done { color: var(--fd-ink-2); }
+.po-step.is-done:not(:last-child)::after { background: var(--fd-accent); }
+
+.po-step.is-now {
+    color: var(--fd-ink);
+    font-weight: 600;
+}
+
+/* ── Two-column shell ─────────────────────────────────────── */
+.po-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+    gap: 32px;
+    align-items: start;
+    margin-top: 28px;
+}
+
+/* ── Form ─────────────────────────────────────────────────── */
+.po-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.po-group {
+    border: 0;
+}
+
+.po-group legend {
+    display: block;
+    width: 100%;
+    padding: 0 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--fd-ink);
+}
+
+.po-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.po-field.is-wide { grid-column: 1 / -1; }
+
+.po-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .02em;
+    color: var(--fd-ink-2);
+}
+
+.po-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e4d6d1;
+    border-radius: 10px;
+    background: var(--fd-paper);
+    font: inherit;
+    font-size: 14.5px;
+    color: var(--fd-ink);
+    outline: none;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.po-field input:hover { border-color: #d8c5be; }
+
+.po-field input:focus {
+    border-color: var(--fd-accent);
+    box-shadow: 0 0 0 3px rgba(255, 99, 71, .13);
+}
+
+.po-field.has-error input {
+    border-color: var(--fd-bad-line);
+    background: var(--fd-bad-soft);
+}
+
+.po-field.has-error input:focus {
+    border-color: var(--fd-bad);
+    box-shadow: 0 0 0 3px rgba(184, 68, 47, .12);
+}
+
+.po-field-error {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--fd-bad);
+}
+
+/* ── Receipt panel ────────────────────────────────────────── */
+.po-receipt {
+    position: sticky;
+    top: 92px; /* clears the 74px sticky navbar */
+    padding: var(--po-pad);
+    background: var(--fd-paper);
+    border: 1px solid var(--fd-line);
+    border-radius: 16px;
+    box-shadow: var(--fd-lift);
+}
+
+.po-receipt h2 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--fd-ink-3);
+}
+
+.po-receipt-count {
+    letter-spacing: .02em;
+    text-transform: none;
+    font-size: 12.5px;
     font-weight: 500;
 }
 
-.place-order .cart-total button:disabled {
-    opacity: 0.6;
+.po-lines {
+    margin-top: 16px;
+    list-style: none;
+}
+
+.po-lines li {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 4px 0;
+    font-size: 14px;
+}
+
+.po-qty {
+    font-weight: 600;
+    color: var(--fd-accent-deep);
+}
+
+.po-line-name { color: var(--fd-ink); }
+.po-line-price { color: var(--fd-ink-2); }
+
+.po-sums {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--fd-line);
+}
+
+.po-sums > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 4px 0;
+    font-size: 14px;
+}
+
+.po-sums dt { color: var(--fd-ink-2); }
+.po-sums dd { color: var(--fd-ink); }
+
+.po-sums .is-credit dt,
+.po-sums .is-credit dd {
+    color: var(--fd-good);
+    font-weight: 500;
+}
+
+/* The tear-line carried over from the cart and the order cards. */
+.po-tear {
+    margin: 16px calc(var(--po-pad) * -1);
+    border-top: 1px dashed var(--fd-tear);
+}
+
+.po-grand {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fd-ink);
+}
+
+.po-grand-n {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* ── Payment choice ───────────────────────────────────────── */
+.po-pay {
+    border: 0;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--fd-line);
+}
+
+.po-pay legend {
+    display: block;
+    width: 100%;
+    padding: 0 0 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fd-ink-2);
+}
+
+.po-pay-option {
+    position: relative; /* contains the hidden radio below */
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 14px;
+    border: 1px solid #e4d6d1;
+    border-radius: 11px;
+    cursor: pointer;
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.po-pay-option + .po-pay-option { margin-top: 8px; }
+
+/* Visually hidden but still focusable, so the ring below can track it. */
+.po-pay-option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.po-pay-mark {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1.5px solid #cbb8b1;
+    background: var(--fd-paper);
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.po-pay-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fd-ink);
+}
+
+.po-pay-option:hover { border-color: #cbb8b1; }
+
+.po-pay-option.is-on {
+    border-color: var(--fd-accent);
+    background: var(--fd-accent-soft);
+}
+
+.po-pay-option.is-on .po-pay-mark {
+    border-color: var(--fd-accent);
+    /* Inset ring draws the filled dot without a nested element. */
+    box-shadow: inset 0 0 0 4px var(--fd-accent);
+}
+
+.po-pay-option:focus-within {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 2px;
+}
+
+/* ── Submit ───────────────────────────────────────────────── */
+.po-submit {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px 0;
+    border: none;
+    border-radius: 11px;
+    background: var(--fd-accent);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+
+.po-submit:hover:not(:disabled) {
+    background: var(--fd-accent-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(220, 69, 38, .55);
+}
+
+.po-submit:active:not(:disabled) { transform: translateY(0); box-shadow: none; }
+
+.po-submit:disabled {
+    background: #f0cdc3;
     cursor: not-allowed;
 }
 
-.place-order .cart-total button {
-    margin-top: 30px;
-    border: none;
-    background-color: tomato;
-    color: white;
-    width: 100%;
-    padding: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.2s;
+.po-note {
+    margin-top: 10px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--fd-ink-3);
+    text-align: center;
 }
 
-.place-order .cart-total button:hover {
-    background-color: #ff4522;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 69, 34, 0.3);
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .po-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 34px;
+    }
+
+    /* Nothing to stick to once the panel is in the flow. */
+    .po-receipt { position: static; }
 }
 
-/* --- Responsive Design --- */
-@media (max-width: 750px) {
+@media (max-width: 620px) {
     .place-order {
-        flex-direction: column; /* Stack vertically on mobile */
-        margin-top: 50px;
-        gap: 30px;
+        --po-pad: 18px;
+        margin-top: 84px;
     }
 
-    .place-order-left, 
-    .place-order-right {
-        max-width: 100%; /* Take full width */
-    }
+    .po-head h1 { font-size: 30px; }
 
-    .place-order-left .title {
-        font-size: 24px;
-        margin-bottom: 20px;
+    .po-steps { gap: 8px; }
+    .po-step:not(:last-child)::after { width: 20px; }
+
+    /* Paired fields get their own row rather than being squeezed. */
+    .po-fields { grid-template-columns: minmax(0, 1fr); }
+    .po-grand-n { font-size: 23px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .place-order,
+    .place-order *,
+    .place-order *::before,
+    .place-order *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
 }

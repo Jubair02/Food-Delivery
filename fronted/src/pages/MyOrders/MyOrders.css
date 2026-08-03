@@ -1,74 +1,797 @@
+/* ═══════════════════════════════════════════════════════════════
+   My Orders — each order is a kitchen ticket: a header, a tracker
+   rail showing where the food is, and a tear-off receipt stub.
+   Palette stays on the app's single tomato accent; the only other
+   hues are semantic (green = delivered, muted = cancelled).
+   ═══════════════════════════════════════════════════════════════ */
+
 .my-orders {
-    margin: 100px 0px 50px;
-    animation: fadeIn 0.5s;
+    /* Local aliases for the shared palette in index.css. */
+    --mo-ink: var(--fd-ink);
+    --mo-ink-2: var(--fd-ink-2);
+    --mo-ink-3: var(--fd-ink-3);
+    --mo-line: var(--fd-line);
+    --mo-tear: var(--fd-tear);
+    --mo-paper: var(--fd-paper);
+    --mo-paper-2: var(--fd-paper-2);
+    --mo-accent: var(--fd-accent);
+    --mo-accent-deep: var(--fd-accent-deep);
+    --mo-accent-soft: var(--fd-accent-soft);
+    --mo-done: var(--fd-good);
+    --mo-done-soft: var(--fd-good-soft);
+    --mo-void: var(--fd-muted);
+    --mo-void-soft: var(--fd-muted-soft);
+    --mo-lift: var(--fd-lift);
+    --mo-gutter: 22px;
+
+    max-width: 880px;
+    margin: 104px auto 80px;
+    color: var(--mo-ink-2);
+    font-variant-numeric: tabular-nums;
 }
 
-.my-orders h2 {
+.my-orders :focus-visible {
+    outline: 2px solid var(--mo-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.mo-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* ── Page header ──────────────────────────────────────────── */
+.mo-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--mo-line);
+}
+
+.mo-head h1 {
+    font-size: 38px;
     font-weight: 600;
-    color: #333;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--mo-ink);
 }
 
-.my-orders-list {
+.mo-sub {
+    margin-top: 8px;
+    font-size: 15px;
+    max-width: 46ch;
+    line-height: 1.5;
+    text-wrap: pretty;
+}
+
+.mo-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px 7px 12px;
+    border-radius: 8px;
+    background: var(--mo-accent-soft);
+    color: var(--mo-accent-deep);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mo-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--mo-accent);
+    box-shadow: 0 0 0 0 rgba(255, 99, 71, .55);
+    animation: mo-beat 2.2s ease-out infinite;
+}
+
+@keyframes mo-beat {
+    0% { box-shadow: 0 0 0 0 rgba(255, 99, 71, .5); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 99, 71, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 99, 71, 0); }
+}
+
+/* ── Status filters ───────────────────────────────────────── */
+.mo-filters {
+    display: flex;
+    gap: 6px;
+    margin: 22px 0 26px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+
+.mo-filters::-webkit-scrollbar { display: none; }
+
+.mo-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--mo-ink-2);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.mo-filter:hover { background: var(--mo-paper-2); color: var(--mo-ink); }
+.mo-filter:active { transform: translateY(1px); }
+
+.mo-filter.is-on {
+    background: var(--mo-ink);
+    border-color: var(--mo-ink);
+    color: #fff;
+}
+
+.mo-filter-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mo-ink-3);
+}
+
+.mo-filter.is-on .mo-filter-count { color: rgba(255, 255, 255, .62); }
+
+/* ── Order list ───────────────────────────────────────────── */
+.mo-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    margin-top: 30px;
+    gap: 16px;
 }
 
-.my-orders-item {
-    display: grid;
-    grid-template-columns: 0.5fr 2fr 1fr 1fr 1.2fr;
+.mo-card {
+    background: var(--mo-paper);
+    border: 1px solid var(--mo-line);
+    border-radius: 16px;
+    box-shadow: var(--mo-lift);
+    overflow: hidden;
+    animation: mo-rise .45s cubic-bezier(.22, .8, .3, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+    transition: box-shadow .25s ease, border-color .25s ease;
+}
+
+.mo-card:hover {
+    border-color: #e5d9d4;
+    box-shadow: 0 1px 2px rgba(72, 40, 30, .05), 0 20px 40px -18px rgba(72, 40, 30, .18);
+}
+
+@keyframes mo-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Card header — reference, timestamp, current state */
+.mo-card-top {
+    display: flex;
     align-items: center;
-    gap: 20px;
-    font-size: 14px;
-    padding: 15px 20px;
-    color: #454545;
-    border: 1px solid tomato;
-    border-radius: 8px;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 18px var(--mo-gutter) 0;
+}
+
+.mo-ident {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mo-ref {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    color: var(--mo-ink);
+}
+
+.mo-when {
+    font-size: 13px;
+    color: var(--mo-ink-3);
+}
+
+.mo-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 11px 5px 9px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mo-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.tone-live .mo-status { background: var(--mo-accent-soft); color: var(--mo-accent-deep); }
+.tone-done .mo-status { background: var(--mo-done-soft); color: var(--mo-done); }
+.tone-void .mo-status { background: var(--mo-void-soft); color: var(--mo-void); }
+
+/* ── The tracker rail (the signature element) ─────────────── */
+.mo-rail {
+    position: relative;
+    padding: 26px var(--mo-gutter) 22px;
+}
+
+.mo-rail-track {
+    position: absolute;
+    top: 32px;
+    /* Ends land on the centre of the first and last stop: the stops grid is
+       inset by the gutter, so each of its four columns is an eighth wide. */
+    left: calc(var(--mo-gutter) + (100% - 2 * var(--mo-gutter)) / 8);
+    right: calc(var(--mo-gutter) + (100% - 2 * var(--mo-gutter)) / 8);
+    height: 2px;
+    border-radius: 2px;
+    background: var(--mo-line);
+}
+
+.mo-rail-fill {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--mo-accent);
+    transition: width .6s cubic-bezier(.22, .8, .3, 1);
+}
+
+.tone-done .mo-rail-fill { background: var(--mo-done); }
+
+.mo-stops {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    list-style: none;
+}
+
+.mo-stop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.mo-stop-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--mo-paper);
+    border: 2px solid var(--mo-line);
+    /* The dots sit on the track, so they need to cover it. */
+    box-shadow: 0 0 0 4px var(--mo-paper);
+    transition: background .3s ease, border-color .3s ease, transform .3s ease;
+}
+
+.mo-stop-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    color: var(--mo-ink-3);
+    transition: color .3s ease;
+}
+
+.mo-stop.is-done .mo-stop-dot,
+.mo-stop.is-now .mo-stop-dot {
+    background: var(--mo-accent);
+    border-color: var(--mo-accent);
+}
+
+.mo-stop.is-done .mo-stop-label { color: var(--mo-ink-2); }
+
+.mo-stop.is-now .mo-stop-dot { transform: scale(1.2); }
+
+.mo-stop.is-now .mo-stop-label {
+    color: var(--mo-ink);
+    font-weight: 600;
+}
+
+.tone-done .mo-stop.is-done .mo-stop-dot,
+.tone-done .mo-stop.is-now .mo-stop-dot {
+    background: var(--mo-done);
+    border-color: var(--mo-done);
+}
+
+/* Only the stop an in-flight order is currently sitting at pulses. */
+.mo-stop.is-beating .mo-stop-dot {
+    animation: mo-stop-beat 2s ease-out infinite;
+}
+
+@keyframes mo-stop-beat {
+    0% { box-shadow: 0 0 0 4px var(--mo-paper), 0 0 0 4px rgba(255, 99, 71, .35); }
+    70% { box-shadow: 0 0 0 4px var(--mo-paper), 0 0 0 13px rgba(255, 99, 71, 0); }
+    100% { box-shadow: 0 0 0 4px var(--mo-paper), 0 0 0 13px rgba(255, 99, 71, 0); }
+}
+
+/* Cancelled orders have no journey to show. */
+.mo-void {
+    padding: 14px var(--mo-gutter) 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--mo-void);
+    max-width: 62ch;
+}
+
+/* ── Tear-off receipt stub ────────────────────────────────── */
+.mo-stub {
+    background: var(--mo-paper-2);
+    border-top: 1px dashed var(--mo-tear);
+}
+
+.mo-stub-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px var(--mo-gutter);
+}
+
+.mo-thumbs {
+    display: flex;
+    list-style: none;
+}
+
+.mo-thumb {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #efe4e0;
+    border: 2px solid var(--mo-paper-2);
+    margin-left: -10px;
+    flex-shrink: 0;
+    transition: transform .2s ease;
+}
+
+.mo-thumb:first-child { margin-left: 0; }
+.mo-card:hover .mo-thumb { transform: translateY(-1px); }
+
+.mo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mo-thumb-fallback {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f3e6e2, #e8d8d3);
+}
+
+.mo-thumb-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mo-ink-2);
 }
 
-.my-orders-item img {
-    width: 45px;
+.mo-meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    font-size: 13.5px;
+    color: var(--mo-ink-2);
 }
 
-.my-orders-food {
+.mo-amount {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mo-ink);
+}
+
+.mo-meta-sep {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--mo-ink-3);
+}
+
+.mo-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.mo-toggle,
+.mo-cancel,
+.mo-confirm-yes,
+.mo-confirm-no {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background .18s ease, color .18s ease, border-color .18s ease, transform .12s ease;
+}
+
+.mo-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: var(--mo-ink-2);
+}
+
+.mo-toggle:hover { background: #f2ebe8; color: var(--mo-ink); }
+.mo-toggle:active { transform: translateY(1px); }
+
+/* Chevron drawn from a rotated border so no icon dependency is needed. */
+.mo-chev {
+    width: 6px;
+    height: 6px;
+    border-right: 1.6px solid currentColor;
+    border-bottom: 1.6px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform .25s ease;
+}
+
+.mo-toggle[aria-expanded='true'] .mo-chev {
+    transform: translateY(1px) rotate(-135deg);
+}
+
+/* ── Cancelling (offered only while an order is Pending) ──── */
+
+/* Kept deliberately quiet: the two-step confirm is the safety net, so this
+   needs no alarm colour competing with the tomato accent. */
+.mo-cancel {
+    padding: 8px 14px;
+    border: 1px solid #e4d6d1;
+    background: #fff;
+    color: var(--mo-ink-2);
+}
+
+.mo-cancel:hover {
+    border-color: #cab6af;
+    color: var(--mo-ink);
+}
+
+.mo-cancel:active { transform: translateY(1px); }
+
+.mo-confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 4px 4px 12px;
+    border: 1px solid #e4d6d1;
+    border-radius: 11px;
+    background: #fff;
+    animation: mo-confirm-in .2s cubic-bezier(.22, .8, .3, 1);
+}
+
+@keyframes mo-confirm-in {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+.mo-confirm-q {
+    font-size: 13px;
     font-weight: 500;
+    color: var(--mo-ink);
+    white-space: nowrap;
+    padding-right: 4px;
 }
 
-.my-orders-status span {
-    color: tomato;
+.mo-confirm-yes {
+    padding: 7px 13px;
+    border: none;
+    background: var(--mo-ink);
+    color: #fff;
 }
 
-.my-orders-status b {
-    font-weight: 500;
-    color: #454545;
+.mo-confirm-yes:hover { background: #382823; }
+.mo-confirm-yes:active { transform: translateY(1px); }
+
+.mo-confirm-no {
+    padding: 7px 11px;
+    border: none;
+    background: transparent;
+    color: var(--mo-ink-2);
 }
 
-/* Color-coded delivery status (updates live via Socket.IO) */
-.my-orders-status.status-pending span { color: #d97706; }
-.my-orders-status.status-preparing span { color: #7c3aed; }
-.my-orders-status.status-out-for-delivery span { color: #2563eb; }
-.my-orders-status.status-delivered span { color: #12805c; }
-.my-orders-status.status-cancelled span { color: #e63946; }
+.mo-confirm-no:hover { background: #f2ebe8; color: var(--mo-ink); }
 
-.my-orders-empty,
-.my-orders-error {
-    margin-top: 30px;
-    color: #666;
+.mo-confirm-yes:disabled,
+.mo-confirm-no:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
 }
 
-.my-orders-error {
-    color: #e63946;
+/* Explains why the cancel button is gone once cooking has started. */
+.mo-locked {
+    font-size: 12.5px;
+    color: var(--mo-ink-3);
+    padding-right: 2px;
 }
 
-@media (max-width: 750px) {
-    .my-orders-item {
-        grid-template-columns: 1fr 2fr 1fr;
-        row-gap: 10px;
-        font-size: 13px;
+/* ── Expandable receipt ───────────────────────────────────── */
+.mo-detail-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .35s cubic-bezier(.22, .8, .3, 1);
+}
+
+.mo-detail-wrap.is-open { grid-template-rows: 1fr; }
+
+.mo-detail-wrap > .mo-detail {
+    overflow: hidden;
+    min-height: 0;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.mo-detail-wrap.is-open > .mo-detail { opacity: 1; }
+
+.mo-detail {
+    padding: 0 var(--mo-gutter);
+}
+
+.mo-detail-wrap.is-open > .mo-detail {
+    padding-bottom: 20px;
+}
+
+.mo-lines {
+    list-style: none;
+    border-top: 1px solid var(--mo-line);
+    padding-top: 14px;
+}
+
+.mo-lines li {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 5px 0;
+    font-size: 14px;
+}
+
+.mo-qty {
+    font-weight: 600;
+    color: var(--mo-accent-deep);
+}
+
+.mo-line-name { color: var(--mo-ink); }
+.mo-line-price { color: var(--mo-ink-2); }
+
+.mo-totals {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--mo-tear);
+    max-width: 320px;
+}
+
+.mo-totals > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: 13.5px;
+    padding: 3px 0;
+}
+
+.mo-totals dt { color: var(--mo-ink-3); }
+.mo-totals dd { color: var(--mo-ink-2); }
+
+.mo-totals .is-credit dt,
+.mo-totals .is-credit dd { color: var(--mo-done); }
+
+.mo-totals .is-total {
+    margin-top: 6px;
+    padding-top: 9px;
+    border-top: 1px solid var(--mo-line);
+    font-size: 15px;
+}
+
+.mo-totals .is-total dt { color: var(--mo-ink); font-weight: 500; }
+.mo-totals .is-total dd { color: var(--mo-ink); font-weight: 600; }
+
+.mo-ship {
+    margin-top: 20px;
+}
+
+.mo-ship h3 {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--mo-ink-3);
+    margin-bottom: 7px;
+}
+
+.mo-ship address {
+    font-style: normal;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--mo-ink-2);
+}
+
+/* ── Empty states ─────────────────────────────────────────── */
+.mo-blank {
+    margin-top: 40px;
+    padding: 56px 28px 60px;
+    text-align: center;
+    background: var(--mo-paper-2);
+    border: 1px dashed var(--mo-tear);
+    border-radius: 18px;
+}
+
+.mo-blank-mark {
+    width: 54px;
+    opacity: .5;
+    margin-bottom: 18px;
+}
+
+.mo-blank h2 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--mo-ink);
+}
+
+.mo-blank p {
+    margin: 10px auto 24px;
+    max-width: 42ch;
+    font-size: 14.5px;
+    line-height: 1.6;
+    text-wrap: pretty;
+}
+
+.mo-cta {
+    padding: 12px 26px;
+    border: none;
+    border-radius: 10px;
+    background: var(--mo-accent);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+
+.mo-cta:hover {
+    background: var(--mo-accent-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -8px rgba(220, 69, 38, .5);
+}
+
+.mo-cta:active { transform: translateY(0); }
+
+.mo-none {
+    padding: 34px 4px;
+    font-size: 14.5px;
+}
+
+.mo-link {
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: var(--mo-accent-deep);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mo-link:hover { color: var(--mo-accent); }
+
+/* ── Skeletons (mirror the card shape, not a spinner) ─────── */
+.mo-skeleton {
+    border: 1px solid var(--mo-line);
+    border-radius: 16px;
+    background: var(--mo-paper);
+    overflow: hidden;
+    animation: mo-rise .45s ease backwards;
+    animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.mo-sk-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px var(--mo-gutter) 0;
+}
+
+.mo-sk-rail {
+    display: block;
+    height: 2px;
+    margin: 30px var(--mo-gutter) 34px;
+}
+
+.mo-sk-stub {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px var(--mo-gutter);
+    background: var(--mo-paper-2);
+    border-top: 1px dashed var(--mo-tear);
+}
+
+.mo-sk-bar,
+.mo-sk-pill,
+.mo-sk-thumb,
+.mo-sk-rail {
+    background: linear-gradient(90deg, #f1eae7 25%, #e7ddd9 37%, #f1eae7 63%);
+    background-size: 400% 100%;
+    animation: mo-shimmer 1.5s ease-in-out infinite;
+    border-radius: 6px;
+}
+
+.mo-sk-bar { height: 12px; }
+.mo-sk-bar.w-90 { width: 190px; }
+.mo-sk-bar.w-120 { width: 120px; }
+.mo-sk-pill { width: 108px; height: 24px; border-radius: 7px; }
+.mo-sk-thumb { width: 38px; height: 38px; border-radius: 10px; }
+
+@keyframes mo-shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: 0 0; }
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .my-orders {
+        --mo-gutter: 16px;
+        margin-top: 84px;
     }
-    .my-orders-item img {
-        width: 40px;
+
+    .mo-head h1 { font-size: 30px; }
+    .mo-head { align-items: flex-start; }
+
+    .mo-card-top { align-items: flex-start; }
+
+    .mo-rail { padding-top: 22px; }
+    .mo-rail-track { top: 28px; }
+    .mo-stop-label { font-size: 10px; letter-spacing: .02em; }
+
+    .mo-stub-summary { align-items: flex-start; }
+    .mo-actions { margin-left: 0; width: 100%; }
+    .mo-locked { width: 100%; }
+    .mo-cancel,
+    .mo-confirm { margin-left: auto; }
+
+    .mo-lines li { grid-template-columns: 24px 1fr auto; font-size: 13.5px; }
+    .mo-totals { max-width: none; }
+    .mo-blank { padding: 44px 20px 48px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .my-orders *,
+    .my-orders *::before,
+    .my-orders *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
+
+    .mo-detail-wrap { transition: none; }
 }

@@ -1,210 +1,495 @@
+/* ═══════════════════════════════════════════════════════════════
+   Cart — the pre-receipt. Line items on the left, and a summary
+   panel on the right built as the receipt stub the order becomes,
+   so the cart and the orders page read as one system.
+   Palette comes from the shared --fd-* tokens in index.css.
+   ═══════════════════════════════════════════════════════════════ */
+
 .cart {
-    margin-top: 100px;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    animation: fadeIn 0.5s;
+    --cart-pad: 24px;
+    max-width: 1080px;
+    margin: 104px auto 80px;
+    color: var(--fd-ink-2);
+    font-variant-numeric: tabular-nums;
+    animation: fadeIn .5s;
 }
 
-/* --- Table Grid Styling --- */
-.cart-items {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+.cart :focus-visible {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
 }
 
-.cart-items-title {
+/* ── Page header ──────────────────────────────────────────── */
+.cart-head {
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--fd-line);
+}
+
+.cart-head h1 {
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--fd-ink);
+}
+
+.cart-count {
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+/* ── Two-column shell ─────────────────────────────────────── */
+.cart-grid {
     display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
+    grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+    gap: 28px;
+    align-items: start;
+    margin-top: 26px;
+}
+
+/* ── Line items ───────────────────────────────────────────── */
+.cart-lines ul {
+    list-style: none;
+}
+
+.cart-line {
+    display: grid;
+    grid-template-columns: 68px minmax(0, 1fr) auto auto 30px;
     align-items: center;
-    color: #888;
-    font-size: max(1vw, 14px);
-    font-weight: 600;
+    gap: 18px;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--fd-line);
+    animation: cart-rise .4s cubic-bezier(.22, .8, .3, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 55ms);
 }
 
-.cart-items-item {
-    margin: 15px 0px;
-    color: #333;
-    font-weight: 500;
+@keyframes cart-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
 }
 
-.cart-items-item img {
-    width: 60px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.cart hr {
-    height: 1px;
-    background-color: #f1f1f1;
-    border: none;
-    margin: 10px 0;
-}
-
-.cart-items-item .cross {
-    cursor: pointer;
-    color: #ff4d4d;
-    font-weight: bold;
-    transition: transform 0.2s;
-    background: transparent;
-    border: none;
-    padding: 0;
-    font-size: inherit;
-    text-align: left;
-    width: fit-content;
-}
-
-.cart-items-item .cross:hover {
-    transform: scale(1.2);
-    color: #ff0000;
-}
-
-/* --- Bottom Section --- */
-.cart-bottom {
-    margin-top: 50px;
-    display: flex;
-    justify-content: space-between;
-    gap: max(5vw, 20px);
-}
-
-/* --- Cart Totals Card --- */
-.cart-total {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background: #fff;
-    padding: 30px;
+.cart-line-img {
+    width: 68px;
+    height: 68px;
     border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+    object-fit: cover;
+    background: var(--fd-muted-soft);
 }
 
-.cart-total h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.cart-total-details {
-    display: flex;
-    justify-content: space-between;
-    color: #555;
+.cart-line-body h2 {
     font-size: 16px;
-}
-
-/* Special style for Discount Row */
-.cart-total-details.discount {
-    color: #23831b;
     font-weight: 600;
+    color: var(--fd-ink);
+    letter-spacing: -0.01em;
 }
 
-.cart-total-details.total {
-    font-size: 20px;
-    color: #333;
+.cart-line-unit {
+    margin-top: 3px;
+    font-size: 13.5px;
+    color: var(--fd-ink-3);
 }
 
-.cart-total button {
+/* Stepper — the cart previously offered no way to add a second helping. */
+.cart-step {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e4d6d1;
+    border-radius: 10px;
+    background: var(--fd-paper);
+    overflow: hidden;
+}
+
+.cart-step button {
+    width: 34px;
+    height: 34px;
     border: none;
-    color: white;
-    background-color: tomato;
-    width: 100%;
-    padding: 15px 0px;
-    border-radius: 8px;
+    background: transparent;
+    color: var(--fd-ink-2);
+    font: inherit;
+    font-size: 17px;
+    line-height: 1;
     cursor: pointer;
+    transition: background .16s ease, color .16s ease;
+}
+
+.cart-step button:hover {
+    background: var(--fd-accent-soft);
+    color: var(--fd-accent-deep);
+}
+
+.cart-step button:active { background: #ffe4dd; }
+
+.cart-step-n {
+    min-width: 26px;
+    text-align: center;
     font-size: 14px;
     font-weight: 600;
-    letter-spacing: 1px;
-    transition: background-color 0.3s ease, transform 0.2s;
+    color: var(--fd-ink);
+    border-left: 1px solid var(--fd-line);
+    border-right: 1px solid var(--fd-line);
+    padding: 8px 0;
 }
 
-.cart-total button:hover {
-    background-color: #ff5733;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(255, 87, 51, 0.3);
-}
-
-/* --- Promo Code Section --- */
-.cart-promocode {
-    flex: 1;
-}
-
-.cart-promocode p {
-    color: #555;
-    margin-bottom: 10px;
-}
-
-.cart-promocode-input {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    overflow: hidden; /* Clips the button corners */
-    border: 1px solid #eaeaea;
-}
-
-.cart-promocode-input input {
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 15px;
-    flex: 1;
-    font-size: 16px;
-}
-
-.cart-promocode-input button {
-    width: max(10vw, 120px);
-    padding: 15px 5px;
-    background-color: #000;
-    border: none;
-    color: white;
-    cursor: pointer;
+.cart-line-total {
+    min-width: 74px;
+    text-align: right;
+    font-size: 15.5px;
     font-weight: 600;
-    transition: background-color 0.3s;
+    color: var(--fd-ink);
 }
 
-.cart-promocode-input button:hover {
-    background-color: #333;
+.cart-line-x {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--fd-ink-3);
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .16s ease, color .16s ease;
 }
 
-/* Promo Feedback Messages */
-.promo-message {
-    margin-top: 10px;
+.cart-line-x:hover {
+    background: var(--fd-muted-soft);
+    color: var(--fd-ink);
+}
+
+.cart-more {
+    margin-top: 22px;
+    padding: 9px 14px 9px 12px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--fd-ink-2);
+    font: inherit;
     font-size: 14px;
     font-weight: 500;
-}
-.promo-message.success {
-    color: #23831b;
-}
-.promo-message.error {
-    color: #ff4d4d;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease;
 }
 
-/* --- Responsive Media Queries --- */
-@media (max-width: 750px) {
-    .cart-bottom {
-        flex-direction: column-reverse;
-    }
-    
-    .cart-promocode {
-        margin-bottom: 30px;
-    }
-    
-    /* Make the table scrollable horizontally on very small phones 
-       instead of squishing columns */
-    .cart-items-title {
-        font-size: 12px;
-        grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 0.5fr;
-        gap: 5px;
-    }
-    
-    .cart-items-item img {
-        width: 40px;
-    }
+.cart-more:hover { background: var(--fd-paper-2); color: var(--fd-ink); }
+.cart-more span { margin-right: 6px; }
+
+/* ── Summary panel (the receipt) ──────────────────────────── */
+.cart-summary {
+    position: sticky;
+    top: 92px; /* clears the 74px sticky navbar */
+    padding: var(--cart-pad);
+    background: var(--fd-paper);
+    border: 1px solid var(--fd-line);
+    border-radius: 16px;
+    box-shadow: var(--fd-lift);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.cart-summary h2 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--fd-ink-3);
+}
+
+.cart-sums {
+    margin-top: 16px;
+}
+
+.cart-sums > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 5px 0;
+    font-size: 14px;
+}
+
+.cart-sums dt { color: var(--fd-ink-2); }
+.cart-sums dd { color: var(--fd-ink); }
+
+.cart-sums .is-credit dt,
+.cart-sums .is-credit dd {
+    color: var(--fd-good);
+    font-weight: 500;
+}
+
+/* The tear-line the printed receipt is torn along — same motif as an order card. */
+.cart-tear {
+    margin: 16px calc(var(--cart-pad) * -1);
+    border-top: 1px dashed var(--fd-tear);
+}
+
+.cart-grand {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fd-ink);
+}
+
+.cart-grand-n {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.cart-checkout {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px 0;
+    border: none;
+    border-radius: 11px;
+    background: var(--fd-accent);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+
+.cart-checkout:hover {
+    background: var(--fd-accent-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(220, 69, 38, .55);
+}
+
+.cart-checkout:active { transform: translateY(0); box-shadow: none; }
+
+.cart-note {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--fd-ink-3);
+    text-align: center;
+}
+
+/* ── Promo code ───────────────────────────────────────────── */
+.cart-promo {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--fd-line);
+}
+
+.cart-promo label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fd-ink-2);
+}
+
+.cart-promo-row {
+    display: flex;
+    gap: 8px;
+}
+
+.cart-promo-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 13px;
+    border: 1px solid #e4d6d1;
+    border-radius: 10px;
+    background: var(--fd-paper-2);
+    font: inherit;
+    font-size: 14px;
+    color: var(--fd-ink);
+    outline: none;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.cart-promo-row input::placeholder { color: var(--fd-ink-3); }
+
+.cart-promo-row input:focus {
+    background: var(--fd-paper);
+    border-color: var(--fd-accent);
+    box-shadow: 0 0 0 3px rgba(255, 99, 71, .13);
+}
+
+.cart-promo-row input[aria-invalid='true'] {
+    border-color: var(--fd-bad-line);
+}
+
+.cart-promo-row button {
+    padding: 11px 18px;
+    border: 1px solid var(--fd-ink);
+    border-radius: 10px;
+    background: var(--fd-ink);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .18s ease, border-color .18s ease, transform .12s ease;
+}
+
+.cart-promo-row button:hover:not(:disabled) { background: #382823; }
+.cart-promo-row button:active:not(:disabled) { transform: translateY(1px); }
+
+.cart-promo-row button:disabled {
+    background: transparent;
+    border-color: var(--fd-line);
+    color: var(--fd-ink-3);
+    cursor: not-allowed;
+}
+
+.cart-promo-error {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--fd-bad);
+}
+
+/* Applied coupon reads as a torn-off ticket rather than a pill badge. */
+.cart-coupon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    background: var(--fd-good-soft);
+    border-radius: 10px;
+}
+
+.cart-coupon-tag {
+    padding: 4px 9px;
+    border-radius: 5px;
+    background: var(--fd-good);
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .06em;
+}
+
+.cart-coupon-text {
+    flex: 1;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #0e6c4e;
+}
+
+.cart-coupon-x {
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0e6c4e;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.cart-coupon-x:hover { color: var(--fd-ink); }
+
+/* ── Empty cart ───────────────────────────────────────────── */
+.cart-blank {
+    margin-top: 40px;
+    padding: 72px 28px 76px;
+    text-align: center;
+    background: var(--fd-paper-2);
+    border: 1px dashed var(--fd-tear);
+    border-radius: 18px;
+}
+
+.cart-blank-mark {
+    width: 46px;
+    margin-bottom: 20px;
+    /* The bundled basket icon is cool navy; warm it so it sits in the palette. */
+    filter: grayscale(1) sepia(.35) opacity(.55);
+}
+
+.cart-blank h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--fd-ink);
+}
+
+.cart-blank p {
+    margin: 10px auto 26px;
+    max-width: 40ch;
+    font-size: 15px;
+    line-height: 1.6;
+    text-wrap: pretty;
+}
+
+.cart-cta {
+    padding: 13px 28px;
+    border: none;
+    border-radius: 11px;
+    background: var(--fd-accent);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+
+.cart-cta:hover {
+    background: var(--fd-accent-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(220, 69, 38, .55);
+}
+
+.cart-cta:active { transform: translateY(0); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .cart-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+    }
+
+    /* Nothing to stick to once the panel is in the flow. */
+    .cart-summary { position: static; }
+}
+
+@media (max-width: 620px) {
+    .cart {
+        --cart-pad: 18px;
+        margin-top: 84px;
+    }
+
+    .cart-head h1 { font-size: 30px; }
+
+    /* Two rows beside the thumbnail: name + remove up top, stepper + total
+       beneath. Every cell is placed explicitly so nothing can auto-flow wrong. */
+    .cart-line {
+        grid-template-columns: 56px minmax(0, 1fr) auto;
+        gap: 12px 14px;
+        padding: 18px 2px;
+    }
+
+    .cart-line-img {
+        width: 56px;
+        height: 56px;
+        grid-row: 1 / span 2;
+        grid-column: 1;
+        align-self: start;
+    }
+
+    .cart-line-body { grid-row: 1; grid-column: 2; }
+    .cart-line-x { grid-row: 1; grid-column: 3; justify-self: end; }
+    .cart-step { grid-row: 2; grid-column: 2; justify-self: start; }
+    .cart-line-total { grid-row: 2; grid-column: 3; min-width: 0; }
+
+    .cart-grand-n { font-size: 23px; }
+    .cart-blank { padding: 56px 20px 60px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cart,
+    .cart *,
+    .cart *::before,
+    .cart *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
 }

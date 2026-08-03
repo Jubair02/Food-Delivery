@@ -1,77 +1,229 @@
+/* ═══════════════════════════════════════════════════════════════
+   Order confirmation — the receipt being issued. Same ticket card
+   and tear-line as the cart, checkout and order history.
+   Palette from --fd-* in index.css.
+   ═══════════════════════════════════════════════════════════════ */
+
 .order-success {
-    min-height: 60vh;
+    --os-pad: 34px;
+    max-width: 560px;
+    margin: 104px auto 80px;
+    color: var(--fd-ink-2);
+    font-variant-numeric: tabular-nums;
+}
+
+.order-success :focus-visible {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+.os-card {
+    padding: var(--os-pad);
+    background: var(--fd-paper);
+    border: 1px solid var(--fd-line);
+    border-radius: 18px;
+    box-shadow: var(--fd-lift);
+    text-align: center;
+    animation: fadeIn .45s cubic-bezier(.22, .8, .3, 1);
+}
+
+/* ── The check draws itself: earned motion on the one page whose
+      whole job is to say "this worked". ─────────────────────────── */
+.os-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: var(--fd-good-soft);
+    color: var(--fd-good);
+    margin-bottom: 22px;
+}
+
+.os-check-ring,
+.os-check-tick {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.os-check-ring {
+    stroke-width: 2.5;
+    opacity: .3;
+    stroke-dasharray: 145;
+    stroke-dashoffset: 145;
+    animation: os-draw .5s ease-out .1s forwards;
+}
+
+.os-check-tick {
+    stroke-width: 4;
+    stroke-dasharray: 44;
+    stroke-dashoffset: 44;
+    animation: os-draw .34s cubic-bezier(.65, 0, .45, 1) .45s forwards;
+}
+
+@keyframes os-draw {
+    to { stroke-dashoffset: 0; }
+}
+
+.os-card h1 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--fd-ink);
+}
+
+.os-lede {
+    margin: 12px auto 0;
+    max-width: 42ch;
+    font-size: 15px;
+    line-height: 1.6;
+    text-wrap: pretty;
+}
+
+.os-tag {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 5px 12px;
+    border-radius: 7px;
+    background: var(--fd-paper-2);
+    border: 1px solid var(--fd-line);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    color: var(--fd-ink-2);
+}
+
+/* The tear-line carried through from the cart and order cards. */
+.os-tear {
+    margin: 28px calc(var(--os-pad) * -1) 26px;
+    border-top: 1px dashed var(--fd-tear);
+}
+
+.os-card h2 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--fd-ink-3);
+    text-align: left;
+}
+
+/* Numbered because this genuinely is the order's sequence, not decoration. */
+.os-next {
+    margin-top: 16px;
+    list-style: none;
+    text-align: left;
+}
+
+.os-next li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 11px 0;
+}
+
+.os-next li + li { border-top: 1px solid var(--fd-line); }
+
+.os-next-n {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 7px;
+    background: var(--fd-accent-soft);
+    color: var(--fd-accent-deep);
+    font-size: 11.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.os-next-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.os-next-text strong {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--fd-ink);
+}
+
+.os-next-text span {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--fd-ink-3);
+}
+
+/* ── Actions: one real button, one text link, so they don't compete ── */
+.os-actions {
+    margin-top: 28px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 18px;
-    padding: 40px 20px;
-    animation: fadeIn 0.5s;
+    gap: 14px;
 }
 
-.order-success-check {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: #eafaf0;
-    color: #23831b;
-    font-size: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: order-pop 0.4s ease;
-}
-
-@keyframes order-pop {
-    0% { transform: scale(0); }
-    70% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-}
-
-.order-success h2 {
-    color: #333;
-    font-weight: 600;
-}
-
-.order-success p {
-    color: #666;
-    max-width: 460px;
-    line-height: 1.6;
-}
-
-.order-success-actions {
-    display: flex;
-    gap: 15px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.order-success-actions button {
-    padding: 12px 28px;
-    border-radius: 50px;
+.os-primary {
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-radius: 11px;
+    background: var(--fd-accent);
+    color: #fff;
+    font: inherit;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
 }
 
-.order-success-actions .primary {
-    border: none;
-    background: tomato;
-    color: #fff;
-}
-.order-success-actions .primary:hover {
-    background: #ff5733;
+.os-primary:hover {
+    background: var(--fd-accent-deep);
     transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(220, 69, 38, .55);
 }
 
-.order-success-actions .ghost {
-    background: transparent;
-    border: 1px solid tomato;
-    color: #49557e;
+.os-primary:active { transform: translateY(0); box-shadow: none; }
+
+.os-link {
+    border: none;
+    background: none;
+    padding: 4px 8px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fd-ink-2);
+    cursor: pointer;
+    transition: color .18s ease;
 }
-.order-success-actions .ghost:hover {
-    background: #fff2ef;
+
+.os-link:hover { color: var(--fd-ink); }
+
+@media (max-width: 560px) {
+    .order-success {
+        --os-pad: 22px;
+        margin-top: 84px;
+    }
+
+    .os-card { border-radius: 16px; }
+    .os-card h1 { font-size: 25px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .os-card { animation: none; }
+
+    /* Show the finished check rather than animating it in. */
+    .os-check-ring,
+    .os-check-tick {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
 }

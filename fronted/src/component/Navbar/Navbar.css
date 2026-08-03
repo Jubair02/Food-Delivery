@@ -1,19 +1,33 @@
-/* ── Sticky, full-width header ─────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   Header — the one element on every page, so it stays quiet and
+   lets the pages carry the design. Warm neutrals and the 11px
+   squircle radius used for avatars and thumbnails elsewhere.
+   Palette from --fd-* in index.css.
+   ═══════════════════════════════════════════════════════════════ */
+
 .navbar {
     position: sticky;
     top: 0;
     z-index: 50;
     width: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: saturate(180%) blur(12px);
-    -webkit-backdrop-filter: saturate(180%) blur(12px);
-    border-bottom: 1px solid #f0f0f0;
-    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.03);
+    background: rgba(255, 255, 255, .82);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
 }
 
-/* Inner content aligned with the page body (which is 80% wide) */
+/* The header earns its edge only once content is sliding underneath it. */
+.navbar.is-scrolled {
+    background: rgba(255, 255, 255, .9);
+    border-bottom-color: var(--fd-line);
+    box-shadow: 0 1px 2px rgba(72, 40, 30, .03), 0 10px 24px -18px rgba(72, 40, 30, .3);
+}
+
+/* Tracks the 80%-wide page body, but stops before it stretches absurdly wide. */
 .navbar-inner {
     width: 80%;
+    max-width: 1400px;
     margin: auto;
     height: 74px;
     display: flex;
@@ -23,27 +37,34 @@
     gap: 24px;
 }
 
+.navbar :focus-visible {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 3px;
+    border-radius: 10px;
+}
+
 .navbar-logo img {
-    width: 140px;
+    width: 132px;
     display: block;
 }
 
 /* ── Nav links ─────────────────────────────────────────── */
 .navbar-menu {
     display: flex;
-    list-style: none;
-    gap: 34px;
-    margin: 0;
-    padding: 0;
+    gap: 32px;
 }
+
 .navbar-menu a {
     position: relative;
-    color: #49557e;
-    font-size: 16px;
+    color: var(--fd-ink-2);
+    font-size: 15.5px;
     font-weight: 500;
-    padding: 6px 0;
-    transition: color 0.2s;
+    padding: 7px 0;
+    transition: color .2s ease;
 }
+
+/* Grows from the left on hover as well as when active, so the link feels
+   responsive rather than only confirming a choice already made. */
 .navbar-menu a::after {
     content: '';
     position: absolute;
@@ -51,68 +72,97 @@
     bottom: 0;
     height: 2px;
     width: 0;
-    background: tomato;
+    background: var(--fd-accent);
     border-radius: 2px;
-    transition: width 0.25s ease;
+    transition: width .25s cubic-bezier(.22, .8, .3, 1);
 }
-.navbar-menu a:hover { color: tomato; }
-.navbar-menu a.active { color: tomato; }
+
+.navbar-menu a:hover { color: var(--fd-ink); }
+.navbar-menu a:hover::after { width: 100%; }
+
+.navbar-menu a.active {
+    color: var(--fd-ink);
+    font-weight: 600;
+}
+
 .navbar-menu a.active::after { width: 100%; }
 
 /* ── Right cluster ─────────────────────────────────────── */
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
 }
 
+/* Squircle, matching the avatar and thumbnail radius used across the app. */
 .nav-icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border: none;
-    border-radius: 50%;
+    border-radius: 11px;
     background: transparent;
     cursor: pointer;
     position: relative;
-    transition: background 0.2s;
+    transition: background .18s ease;
 }
-.nav-icon-btn:hover { background: #f4f4f6; }
-.nav-icon-btn img { width: 20px; height: 20px; }
+
+.nav-icon-btn:hover { background: var(--fd-muted-soft); }
+.nav-icon-btn:active { background: #ece5e2; }
+.nav-icon-btn img { width: 19px; height: 19px; }
 
 /* Search */
-.navbar-search { display: flex; align-items: center; gap: 6px; }
+.navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
 .navbar-search-input {
-    border: 1px solid #e2e2e2;
-    border-radius: 50px;
-    padding: 9px 16px;
+    width: 200px;
+    border: 1px solid #e4d6d1;
+    border-radius: 10px;
+    padding: 9px 13px;
     font-size: 14px;
     font-family: inherit;
+    color: var(--fd-ink);
     outline: none;
-    width: 200px;
-    background: #fff;
-    transition: border 0.2s, box-shadow 0.2s;
+    background: var(--fd-paper-2);
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    animation: nav-search-in .22s cubic-bezier(.22, .8, .3, 1);
 }
+
+.navbar-search-input::placeholder { color: var(--fd-ink-3); }
+
 .navbar-search-input:focus {
-    border-color: tomato;
-    box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.12);
+    background: var(--fd-paper);
+    border-color: var(--fd-accent);
+    box-shadow: 0 0 0 3px rgba(255, 99, 71, .13);
+}
+
+/* Transform and opacity only, so the field slides in without the browser
+   re-laying out the whole header on every frame. */
+@keyframes nav-search-in {
+    from { opacity: 0; transform: translateX(12px); }
+    to { opacity: 1; transform: none; }
 }
 
 /* Cart badge */
 .cart-badge {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    background: tomato;
+    top: 2px;
+    right: 2px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    background: var(--fd-accent);
     color: #fff;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    border-radius: 50px;
+    font-variant-numeric: tabular-nums;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -123,121 +173,161 @@
 /* Sign in */
 .signin-btn {
     border: none;
-    background: tomato;
+    background: var(--fd-accent);
     color: #fff;
-    font-size: 15px;
+    font: inherit;
+    font-size: 14.5px;
     font-weight: 600;
-    padding: 10px 26px;
-    border-radius: 50px;
+    padding: 11px 22px;
+    border-radius: 11px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
 }
+
 .signin-btn:hover {
-    background: #ec4f31;
+    background: var(--fd-accent-deep);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
+    box-shadow: 0 8px 18px -8px rgba(220, 69, 38, .55);
 }
+
+.signin-btn:active { transform: translateY(0); box-shadow: none; }
 
 /* ── Profile ───────────────────────────────────────────── */
 .navbar-profile { position: relative; }
+
 .avatar-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 12px;
     border: none;
-    background: linear-gradient(135deg, #ff7a5c, #ff5733);
+    background: var(--fd-accent);
     color: #fff;
-    font-size: 16px;
-    font-weight: 700;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: box-shadow 0.2s, transform 0.15s;
+    transition: box-shadow .2s ease, transform .15s ease;
 }
-.avatar-btn:hover { box-shadow: 0 0 0 4px rgba(255, 99, 71, 0.18); }
-.avatar-btn { overflow: hidden; padding: 0; }
-.avatar-btn .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.avatar-btn:hover {
+    box-shadow: 0 0 0 3px var(--fd-accent-soft);
+    transform: translateY(-1px);
+}
+
+.avatar-btn:active { transform: translateY(0); }
+
+.avatar-btn .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 .navbar-profile-dropdown {
     position: absolute;
     right: 0;
-    top: calc(100% + 12px);
-    min-width: 190px;
-    background: #fff;
-    border: 1px solid #eee;
+    top: calc(100% + 10px);
+    min-width: 194px;
+    background: var(--fd-paper);
+    border: 1px solid var(--fd-line);
     border-radius: 14px;
-    box-shadow: 0 12px 34px rgba(16, 24, 40, 0.14);
-    padding: 8px;
-    margin: 0;
+    /* Warm-tinted rather than the usual blue-black. */
+    box-shadow: 0 2px 4px rgba(72, 40, 30, .04), 0 16px 36px -12px rgba(72, 40, 30, .26);
+    padding: 7px;
     list-style: none;
     z-index: 60;
-    animation: navbar-pop 0.14s ease;
+    animation: navbar-pop .16s cubic-bezier(.22, .8, .3, 1);
 }
+
 @keyframes navbar-pop {
-    from { opacity: 0; transform: translateY(-6px); }
+    from { opacity: 0; transform: translateY(-6px) scale(.98); }
     to { opacity: 1; transform: none; }
 }
-.navbar-profile-dropdown li {
+
+.navbar-profile-dropdown button {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 11px 12px;
+    gap: 11px;
+    padding: 10px 11px;
+    border: none;
     border-radius: 9px;
-    cursor: pointer;
-    color: #49557e;
+    background: transparent;
+    color: var(--fd-ink-2);
+    font: inherit;
     font-size: 14px;
     font-weight: 500;
-    transition: background 0.15s, color 0.15s;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
 }
-.navbar-profile-dropdown li img { width: 18px; height: 18px; }
-.navbar-profile-dropdown li:hover { background: #fff4f2; color: tomato; }
-.navbar-profile-dropdown li.danger:hover { background: #fff1f0; color: #e63946; }
+
+.navbar-profile-dropdown button img {
+    width: 17px;
+    height: 17px;
+    opacity: .75;
+}
+
+.navbar-profile-dropdown button:hover {
+    background: var(--fd-accent-soft);
+    color: var(--fd-accent-deep);
+}
+
+.navbar-profile-dropdown button.danger:hover {
+    background: var(--fd-bad-soft);
+    color: var(--fd-bad);
+}
 
 /* ── Hamburger ─────────────────────────────────────────── */
 .navbar-hamburger {
     display: none;
     flex-direction: column;
     justify-content: space-between;
-    width: 26px;
-    height: 20px;
+    width: 24px;
+    height: 18px;
     background: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
 }
+
 .navbar-hamburger span {
     display: block;
     height: 2.5px;
     width: 100%;
-    background-color: #49557e;
+    background-color: var(--fd-ink-2);
     border-radius: 3px;
-    transition: 0.3s;
+    transition: transform .3s cubic-bezier(.22, .8, .3, 1), opacity .2s ease;
 }
-.navbar-hamburger.open span:nth-child(1) { transform: translateY(8.75px) rotate(45deg); }
+
+.navbar-hamburger.open span:nth-child(1) { transform: translateY(7.75px) rotate(45deg); }
 .navbar-hamburger.open span:nth-child(2) { opacity: 0; }
-.navbar-hamburger.open span:nth-child(3) { transform: translateY(-8.75px) rotate(-45deg); }
+.navbar-hamburger.open span:nth-child(3) { transform: translateY(-7.75px) rotate(-45deg); }
 
 /* ── Responsive ────────────────────────────────────────── */
 @media (max-width: 1050px) {
     .navbar-inner { width: 88%; }
-    .navbar-menu { gap: 26px; }
+    .navbar-menu { gap: 24px; }
 }
 
 @media (max-width: 900px) {
-    .navbar-menu { gap: 20px; font-size: 15px; }
-    .navbar-search-input { width: 150px; }
-    .signin-btn { padding: 9px 20px; font-size: 14px; }
+    .navbar-menu { gap: 18px; font-size: 15px; }
+    .navbar-search-input { width: 154px; }
+    .signin-btn { padding: 10px 18px; font-size: 14px; }
 }
 
 @media (max-width: 750px) {
     .navbar-inner { height: 64px; }
     .navbar-logo { margin-right: auto; }
-    .navbar-logo img { width: 120px; }
-    .navbar-right { order: 2; gap: 8px; }
-    .navbar-hamburger { display: flex; order: 3; margin-left: 6px; }
+    .navbar-logo img { width: 116px; }
+    .navbar-right { order: 2; gap: 4px; }
+    .navbar-hamburger { display: flex; order: 3; margin-left: 10px; }
 
-    /* Menu drops as a full-width panel under the header */
+    /* Menu drops as a full-width sheet under the header. */
     .navbar-menu {
         display: none;
         position: absolute;
@@ -247,15 +337,51 @@
         flex-direction: column;
         align-items: stretch;
         gap: 2px;
-        background: #fff;
-        padding: 10px 10%;
-        border-bottom: 1px solid #eee;
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        background: var(--fd-paper);
+        padding: 8px 10px 12px;
+        border-bottom: 1px solid var(--fd-line);
+        box-shadow: 0 16px 30px -14px rgba(72, 40, 30, .25);
+        animation: nav-sheet-in .2s cubic-bezier(.22, .8, .3, 1);
     }
-    .navbar-menu.show { display: flex; }
-    .navbar-menu a { padding: 12px 4px; font-size: 16px; }
-    .navbar-menu a::after { display: none; }
-    .navbar-menu a.active { color: tomato; }
 
-    .navbar-search-input { width: 140px; }
+    .navbar-menu.show { display: flex; }
+
+    @keyframes nav-sheet-in {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* In the sheet the links are rows, so the underline gives way to a
+       highlighted row — an underline on a stacked list reads as noise. */
+    .navbar-menu a {
+        padding: 12px 12px;
+        font-size: 15.5px;
+        border-radius: 10px;
+        transition: background .16s ease, color .16s ease;
+    }
+
+    .navbar-menu a::after { display: none; }
+    .navbar-menu a:hover { background: var(--fd-paper-2); }
+
+    .navbar-menu a.active {
+        background: var(--fd-accent-soft);
+        color: var(--fd-accent-deep);
+    }
+
+    .navbar-search-input { width: 132px; }
+}
+
+@media (max-width: 460px) {
+    /* At this width the open search field would crowd out everything else. */
+    .navbar-search.open .navbar-search-input { width: 108px; }
+    .navbar-logo img { width: 104px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar *,
+    .navbar *::before,
+    .navbar *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
 }

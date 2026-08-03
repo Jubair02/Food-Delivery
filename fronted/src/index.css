@@ -7,6 +7,32 @@
   scroll-behavior: smooth;
 }
 
+/* Shared surface palette. Warm neutrals tinted toward the tomato accent so the
+   grays never read cool against it, plus the two semantic hues (good / muted).
+   Consumed by the cart and orders pages; safe for any page to adopt. */
+:root{
+  --fd-ink: #1b1310;
+  --fd-ink-2: #6b5d57;
+  --fd-ink-3: #a2938d;
+  --fd-line: #efe8e5;
+  --fd-tear: #d8ccc7;
+  --fd-paper: #fff;
+  --fd-paper-2: #fbf7f5;
+  --fd-accent: #ff6347;
+  --fd-accent-deep: #dc4526;
+  --fd-accent-soft: #fff1ed;
+  --fd-good: #12805c;
+  --fd-good-soft: #e7f5f0;
+  /* Desaturated brick, so form errors read as errors without competing
+     with the tomato accent the way a pure red would. */
+  --fd-bad: #b8442f;
+  --fd-bad-soft: #fdf0ec;
+  --fd-bad-line: #d98b7d;
+  --fd-muted: #8a7a74;
+  --fd-muted-soft: #f2eeec;
+  --fd-lift: 0 1px 2px rgba(72, 40, 30, .04), 0 14px 30px -14px rgba(72, 40, 30, .12);
+}
+
 body{
   min-height: 100vh;
 }
@@ -28,13 +54,15 @@ a{
   width: 80%;
   margin: auto;
 }
-@keyframes fadeIn 
-{
-    0%{
-     opacity: 0;  
-}
-100%{
+/* Shared page-entry animation. Cart.css used to redefine this with the slide
+   included, which silently overrode it everywhere — it lives here now. */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
     opacity: 1;
-}
- 
+    transform: translateY(0);
+  }
 }

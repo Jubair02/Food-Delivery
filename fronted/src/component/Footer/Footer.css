@@ -1,180 +1,206 @@
-/* Container */
+/* ═══════════════════════════════════════════════════════════════
+   Footer — a warm dark band that closes the page. The previous
+   #1a1a1a was a cool black that sat outside the palette; this is
+   the same ink hue used for text throughout, taken darker.
+   ═══════════════════════════════════════════════════════════════ */
+
 .footer {
-    color: #d9d9d9;
-    background-color: #1a1a1a; /* Darker, more modern grey */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    padding: 60px 8vw 20px; /* Adjusted padding */
-    margin-top: 80px;
+    /* Locals: this is the one dark surface, so it inverts the usual scale. */
+    --ft-ground: #17100e;
+    --ft-text: #b6a8a2;
+    --ft-text-dim: #8a7b75;
+    --ft-heading: #fdfbfa;
+    --ft-line: rgba(255, 255, 255, .09);
+
+    background: var(--ft-ground);
+    color: var(--ft-text);
+    margin-top: 32px;
+    padding: 44px 8vw 0;
 }
 
-/* Main Grid Layout */
-.footer-content {
-    width: 100%;
+.footer :focus-visible {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+/* ── Upper grid ───────────────────────────────────────────── */
+.footer-inner {
+    max-width: 1180px;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr; /* 2:1:1 Ratio */
-    gap: 60px;
+    grid-template-columns: 1.7fr 1fr 1fr;
+    gap: 44px;
+    padding-bottom: 34px;
 }
 
-/* Headings */
-.footer-content h2 {
-    color: #fff;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Left Section Specifics */
-.footer-content-left {
+/* ── Brand ────────────────────────────────────────────────── */
+.footer-brand {
     display: flex;
     flex-direction: column;
-    align-items: start;
-    gap: 20px;
-}
-
-.footer-logo {
-    max-width: 140px; /* Consistent logo size */
-}
-
-.footer-content-left p {
-    font-size: 0.95rem;
-    line-height: 1.6; /* Better readability */
-    color: #b0b0b0;
-}
-
-/* Social Icons */
-.footer-social-icons {
-    display: flex;
+    align-items: flex-start;
     gap: 15px;
 }
 
-.footer-social-icons img {
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: 0.3s ease;
-    border: 1px solid transparent;
+/* The logo is a transparent PNG whose bicycle mark is dark navy — on a dark
+   ground it all but disappeared. Rendered as a white mark instead: invert()
+   leaves alpha alone, so only the visible glyph is recoloured. */
+.footer-logo {
+    width: 104px;
+    filter: brightness(0) invert(1);
+    opacity: .93;
 }
 
-/* Social Icon Hover Effect */
-.footer-social-icons img:hover {
-    transform: translateY(-5px); /* Floats up */
-    border-color: #fff;
-    filter: brightness(1.2);
+.footer-brand p {
+    max-width: 46ch;
+    font-size: 13.5px;
+    line-height: 1.6;
+    text-wrap: pretty;
 }
 
-/* Center & Right Sections */
-.footer-content-center, 
-.footer-content-right {
+/* ── Social ───────────────────────────────────────────────── */
+.footer-social {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+}
+
+.footer-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    /* Squircle, matching the icon buttons in the header. */
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid var(--ft-line);
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.footer-social a:hover {
+    background: var(--fd-accent);
+    border-color: var(--fd-accent);
+    transform: translateY(-2px);
+}
+
+.footer-social a:active { transform: translateY(0); }
+
+/* The icons ship as white glyphs, so they need no filter here. */
+.footer-social img {
+    width: 15px;
+    height: 15px;
+    opacity: .8;
+    transition: opacity .2s ease;
+}
+
+.footer-social a:hover img { opacity: 1; }
+
+/* ── Link columns ─────────────────────────────────────────── */
+.footer-col {
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
 }
 
-.footer-content ul {
+/* Same small letterspaced label used for section headings across the app,
+   rather than the old 1.2rem all-caps heading. */
+.footer-col h2 {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ft-heading);
+    margin-bottom: 13px;
+}
+
+.footer-col ul {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
-.footer-content li {
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: 0.3s;
-    position: relative;
-    width: fit-content;
-}
-
-/* Reset the buttons/links used inside the footer lists */
-.footer-content li button,
-.footer-content li a {
+/* The interactive element carries the hover, not the <li> — the old rule put
+   cursor and hover on the row while only the inner text was clickable. */
+.footer-col button,
+.footer-col a {
+    display: inline-block;
     background: none;
     border: none;
-    padding: 0;
-    margin: 0;
+    padding: 3px 0;
     font: inherit;
-    color: inherit;
+    font-size: 13.5px;
+    color: var(--ft-text);
+    text-align: left;
     cursor: pointer;
-    text-align: inherit;
+    transition: color .2s ease, transform .2s ease;
 }
 
-/* Link Hover Effect (Slide & Color) */
-.footer-content li:hover {
-    color: #ff6347; /* Tomato color (Food theme) - change to your brand color */
-    transform: translateX(5px);
+.footer-col button:hover,
+.footer-col a:hover {
+    color: var(--fd-accent);
+    transform: translateX(3px);
 }
 
-/* Divider */
-.footer hr {
-    width: 100%;
-    height: 1px;
-    background: #444; /* Subtle line */
-    border: none;
-    margin: 10px 0;
+/* ── Base bar ─────────────────────────────────────────────── */
+.footer-base {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 15px 0 17px;
+    border-top: 1px solid var(--ft-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--ft-text-dim);
 }
 
-/* Copyright Text */
-.footer-copyright {
-    text-align: center;
-    font-size: 0.85rem;
-    color: #888;
-}
-
-/* Powered by */
-.footer-powered {
-    text-align: center;
-    font-size: 0.85rem;
-    color: #888;
-    margin-top: -18px;
-}
-.footer-powered a {
-    color: #ff6347;
+.footer-base a {
+    color: var(--ft-text);
     font-weight: 600;
-    transition: 0.2s;
-}
-.footer-powered a:hover {
-    text-decoration: underline;
+    transition: color .2s ease;
 }
 
-/* --- Responsive Design (Tablets & Mobile) --- */
+.footer-base a:hover { color: var(--fd-accent); }
+
+/* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 900px) {
-    .footer-content {
-        grid-template-columns: 1fr 1fr; /* 2 columns for tablet */
-        gap: 40px;
+    .footer-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px 40px;
     }
-    
-    .footer-content-left {
-        grid-column: span 2; /* Logo section takes full width */
-        align-items: center;
-        text-align: center;
-    }
+
+    /* Brand spans the top; the two link columns sit side by side beneath it. */
+    .footer-brand { grid-column: span 2; }
 }
 
 @media (max-width: 600px) {
     .footer {
-        padding: 40px 5vw 20px;
+        padding: 34px 6vw 0;
     }
 
-    .footer-content {
-        display: flex;
+    .footer-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+        padding-bottom: 26px;
+    }
+
+    .footer-brand { grid-column: auto; }
+
+    .footer-base {
         flex-direction: column;
-        gap: 30px;
-        text-align: center; /* Center align for mobile */
+        align-items: flex-start;
+        gap: 6px;
     }
+}
 
-    .footer-content-left, 
-    .footer-content-center, 
-    .footer-content-right {
-        align-items: center; /* Center items flex-wise */
-    }
-
-    .footer-social-icons {
-        margin-top: 10px;
+@media (prefers-reduced-motion: reduce) {
+    .footer *,
+    .footer *::before,
+    .footer *::after {
+        transition-duration: .01ms !important;
     }
 }
