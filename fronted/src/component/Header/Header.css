@@ -1,65 +1,139 @@
-.header{
-    height: 32vw;
-    margin: 30px auto;
-    /* background-image: url('/header_img.png'); */
-    background: url('/header_img.png') no-repeat;
-    
-    background-size: contain;
+/* ═══════════════════════════════════════════════════════════════
+   Hero. The old rule paired height:32vw (box ratio 2.50) with
+   background-size:contain on a 1534×650 image (ratio 2.36), so the
+   photo fit by height and left a blank strip ~5.6% wide down the
+   right edge. Now the box matches the asset's ratio and uses cover.
+   ═══════════════════════════════════════════════════════════════ */
+
+.header {
     position: relative;
+    display: flex;
+    align-items: flex-end;
+    margin: 28px auto 0;
+    aspect-ratio: 1534 / 650;
+    min-height: 340px;
+    padding-bottom: clamp(26px, 4vw, 54px);
+    border-radius: 20px;
+    overflow: hidden;
+    /* Deep warm base shows through the PNG's transparent areas. */
+    background: #2a1a13 url('/header_img.png') center / cover no-repeat;
 }
-.header-contents{
+
+/* Scrim so the white copy clears contrast. Bare, the text sat on #E96223 at
+   ~3.9:1, under the 4.5:1 minimum. Measured against that pixel, this gradient
+   gives ~9:1 at the left edge and ~5.7:1 where the text block ends — still
+   clear of AA, and far lighter than the .8 flat start it replaces (14.5:1),
+   which buried the photo for contrast nobody needed. */
+.header::after {
+    content: '';
     position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        100deg,
+        rgba(23, 16, 14, .13) 0%,
+        rgba(23, 16, 14, .1) 34%,
+        rgba(23, 16, 14, .06) 60%,
+        rgba(23, 16, 14, 0) 100%
+    );
+}
+
+.header-contents {
+    position: relative; /* above the scrim */
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    align-items: start;
-    gap: 1.5vw;
-    max-width: 50%;
-    bottom: 10%;
-    left: 6vw;
-    animation: fadeIn 3s;
+    align-items: flex-start;
+    gap: 18px;
+    max-width: 34ch;
+    padding: 0 clamp(22px, 4.5vw, 56px);
+    /* Was 3s, which crawled once the shared keyframe gained a slide. */
+    animation: fadeIn .6s cubic-bezier(.22, .8, .3, 1);
 }
-.header-contents h2{
-    font-weight: 500;
-    color: white;
-    font-size: max(4.5vw,22px);
+
+.header-contents h1 {
+    font-size: clamp(30px, 4.1vw, 52px);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-wrap: balance;
+    /* Carries legibility where the scrim is lightest, so the gradient doesn't
+       have to darken the whole photo to protect the type. */
+    text-shadow: 0 1px 18px rgba(23, 16, 14, .45);
 }
-.header-contents p{
-    color: white;
-    font-size: 1vw;
+
+.header-contents p {
+    /* Was 1vw — 12.8px at 1280px wide, and display:none below 750px. */
+    font-size: clamp(14px, 1.15vw, 17px);
+    line-height: 1.55;
+    /* Raised from .88: a translucent white loses contrast against the now
+       lighter scrim, and this is the smaller of the two text sizes. */
+    color: rgba(255, 255, 255, .95);
+    text-shadow: 0 1px 14px rgba(23, 16, 14, .5);
+    text-wrap: pretty;
 }
-.header-contents button{
+
+.header-contents button {
+    margin-top: 4px;
     border: none;
-    color: #747474;
-    font-weight: 500;
-    padding: 1vw;
-    background-color: white;
-    font-size: max(1vw,13px);
-    border-radius: 50px;
+    padding: 13px 26px;
+    border-radius: 11px;
+    background: #fff;
+    /* Was #747474 — a mid-grey CTA on the brand's own hero. */
+    color: var(--fd-ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
-}
-.header-contents button:hover{
-    background-color: #f0f0f0;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
 }
 
-@media (max-width:1050px) {
-   
-    .header-contents{
-        max-width: 70%;       
-    } 
-      
+.header-contents button:hover {
+    background: var(--fd-accent);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px -10px rgba(0, 0, 0, .5);
 }
 
-@media (max-width:750px) {
-   
-    .header-contents{
-        max-width: 65%;       
-    } 
-    .header-contents p{
-        display: none;
+.header-contents button:active { transform: translateY(0); box-shadow: none; }
+
+.header-contents button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .header {
+        /* Taller crop so the copy has room once the box stops being wide. */
+        aspect-ratio: 4 / 3;
+        max-height: 460px;
+        border-radius: 16px;
     }
-    .header-contents button{
-        padding: 2vw 4vw;
+
+    .header-contents { max-width: 100%; }
+}
+
+@media (max-width: 520px) {
+    .header {
+        aspect-ratio: 3 / 4;
+        min-height: 400px;
+        max-height: 520px;
     }
-      
+
+    /* Vertical crop puts more image behind the text, so this stays a little
+       stronger than the desktop scrim — but still well short of the old .88. */
+    .header::after {
+        background: linear-gradient(
+            to top,
+            rgba(23, 16, 14, .6) 0%,
+            rgba(23, 16, 14, .3) 46%,
+            rgba(23, 16, 14, .04) 100%
+        );
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header-contents { animation: none; }
+    .header-contents button { transition-duration: .01ms; }
+    .header-contents button:hover { transform: none; }
 }

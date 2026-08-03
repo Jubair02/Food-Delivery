@@ -1,60 +1,82 @@
+/* ═══════════════════════════════════════════════════════════════
+   App band. Sits on the recessed warm paper so it reads as a
+   distinct section without a random dark block mid-page.
+   ═══════════════════════════════════════════════════════════════ */
+
 .app-download {
-    margin: 100px auto; /* Vertical margin 100px, Horizontal auto */
-    font-size: max(2vw, 20px); /* Responsive font size base */
+    margin: 72px 0 0;
+    padding: 52px 34px 56px;
+    background: var(--fd-paper-2);
+    border: 1px solid var(--fd-line);
+    border-radius: 22px;
     text-align: center;
-    font-weight: 500;
-    /* Optional: Add a subtle background or border if you want it to stand out more */
-    /* background: linear-gradient(to bottom, transparent, #fcfcfc); */
 }
 
-/* Text Styling */
-.app-download p {
-    color: #333;
-    line-height: 1.4;
-    font-family: 'Outfit', sans-serif; /* Ensure you have a nice font loaded */
+.app-download-inner {
+    max-width: 46ch;
+    margin: 0 auto;
 }
 
-/* Highlight "KhaiDai App" */
-.app-download .highlight {
-    color: #ff6347; /* Tomato color matches your theme */
-    font-weight: 700;
-    font-size: 1.1em; /* Slightly larger than surrounding text */
+.app-download-eyebrow {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 7px;
+    background: var(--fd-accent-soft);
+    color: var(--fd-accent-deep);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
 }
 
-/* Buttons Container */
+.app-download h2 {
+    margin-top: 16px;
+    font-size: clamp(23px, 2.4vw, 34px);
+    font-weight: 600;
+    line-height: 1.16;
+    letter-spacing: -0.028em;
+    color: var(--fd-ink);
+    text-wrap: balance;
+}
+
+.app-download-body {
+    margin-top: 12px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--fd-ink-2);
+    text-wrap: pretty;
+}
+
 .app-download-platforms {
     display: flex;
     justify-content: center;
-    gap: 20px; /* Fixed gap is often cleaner than vw for buttons */
-    margin-top: 40px;
+    align-items: center;
+    gap: 14px;
+    margin-top: 28px;
+    flex-wrap: wrap;
 }
 
-/* Store Buttons */
-.app-download-platforms img {
-    width: 30vw; /* Responsive width */
-    max-width: 180px; /* Cap the size for desktop */
-    min-width: 120px; /* Ensure it's not too small on tiny phones */
+/* Static, and visibly inactive — no pointer cursor or hover lift promising a
+   tap target that isn't there. */
+.app-download-badge {
+    display: inline-flex;
+    opacity: .45;
+    filter: grayscale(1);
+}
+
+.app-download-badge img {
+    width: clamp(122px, 20vw, 156px);
     height: auto;
-    transition: all 0.4s ease; /* Smooth transition */
-    cursor: pointer;
-    border-radius: 8px; /* Slight rounding if the images are sharp squares */
+    border-radius: 8px;
+    display: block;
 }
 
-/* Hover Effect: Lift and Shadow */
-.app-download-platforms img:hover {
-    transform: translateY(-8px) scale(1.02); /* Moves up and grows slightly */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Soft shadow below */
-}
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
+@media (max-width: 620px) {
     .app-download {
-        margin-top: 60px; /* Less spacing on mobile */
-        font-size: 18px;
+        margin-top: 52px;
+        padding: 38px 20px 42px;
+        border-radius: 18px;
     }
 
-    .app-download-platforms {
-        margin-top: 25px;
-        gap: 15px;
-    }
+    .app-download h2 br { display: none; }
 }

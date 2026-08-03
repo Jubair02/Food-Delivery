@@ -10,6 +10,21 @@ const removeLocalImage = (image) => {
   fs.promises.unlink(path.join(UPLOAD_DIR, image)).catch(() => {});
 };
 
+/**
+ * Ratings arrive as form-data strings. An empty value clears the rating back to
+ * null ("not rated"); anything else must parse to a number in 0–5.
+ * Returns { ok, value } so the caller can reject bad input instead of silently
+ * coercing "abc" into 0 stars.
+ */
+const parseRating = (raw) => {
+  if (raw === undefined) return { ok: true, value: undefined }; // field not sent
+  const text = String(raw).trim();
+  if (text === "") return { ok: true, value: null }; // explicitly cleared
+  const value = Number(text);
+  if (!Number.isFinite(value) || value < 0 || value > 5) return { ok: false };
+  return { ok: true, value: Math.round(value * 10) / 10 }; // one decimal, e.g. 4.6
+};
+
 // GET /api/food/list  — public (storefront): only enabled items
 export const listFood = async (req, res) => {
   try {
@@ -51,12 +66,17 @@ export const setFoodDisabled = async (req, res) => {
 // POST /api/food/add  — admin (multipart form-data, field "image")
 export const addFood = async (req, res) => {
   try {
-    const { name, price, category, description } = req.body;
+    const { name, price, category, description, rating } = req.body;
     if (!name || !price || !category) {
       return res.status(400).json({ success: false, message: "name, price and category are required" });
     }
     if (!req.file) {
       return res.status(400).json({ success: false, message: "An image is required" });
+    }
+
+    const parsedRating = parseRating(rating);
+    if (!parsedRating.ok) {
+      return res.status(400).json({ success: false, message: "Rating must be a number between 0 and 5" });
     }
 
     const food = await foodModel.create({
@@ -66,6 +86,7 @@ export const addFood = async (req, res) => {
       category,
       description: description || "",
       image: storedImageValue(req.file),
+      rating: parsedRating.value ?? null,
     });
 
     emitChange("menu:changed");
@@ -79,16 +100,23 @@ export const addFood = async (req, res) => {
 // POST /api/food/edit  — admin (multipart; image optional)  { id, name?, price?, category?, description? }
 export const updateFood = async (req, res) => {
   try {
-    const { id, name, price, category, description } = req.body;
+    const { id, name, price, category, description, rating } = req.body;
     const food = await foodModel.findById(id);
     if (!food) {
       return res.status(404).json({ success: false, message: "Food not found" });
+    }
+
+    const parsedRating = parseRating(rating);
+    if (!parsedRating.ok) {
+      return res.status(400).json({ success: false, message: "Rating must be a number between 0 and 5" });
     }
 
     if (name !== undefined) food.name = name;
     if (description !== undefined) food.description = description;
     if (category !== undefined) food.category = category;
     if (price !== undefined && price !== "") food.price = Number(price);
+    // undefined = not sent, null = cleared on purpose.
+    if (parsedRating.value !== undefined) food.rating = parsedRating.value;
 
     // If a new image was uploaded, swap it in and best-effort remove the old local file.
     if (req.file) {

@@ -5,7 +5,7 @@ import Modal from '../components/Modal'
 import { foodImageUrl, FALLBACK_IMG, money } from '../utils'
 
 const CATEGORIES = ['Salad', 'Rolls', 'Deserts', 'Sandwich', 'Cake', 'Pure Veg', 'Pasta', 'Noodles']
-const EMPTY = { name: '', description: '', price: '', category: CATEGORIES[0] }
+const EMPTY = { name: '', description: '', price: '', category: CATEGORIES[0], rating: '' }
 const UNDO_MS = 5000
 
 const IconEdit = (
@@ -105,6 +105,7 @@ const Menu = () => {
     body.append('description', form.description)
     body.append('price', form.price)
     body.append('category', form.category)
+    body.append('rating', form.rating) // blank leaves the item unrated
     body.append('image', image)
     const json = await apiFetch('/api/admin/food', { method: 'POST', body })
     setSubmitting(false)
@@ -174,6 +175,7 @@ const Menu = () => {
       description: item.description || '',
       price: String(item.price ?? ''),
       category: item.category || CATEGORIES[0],
+      rating: item.rating === null || item.rating === undefined ? '' : String(item.rating),
     })
     setEditImage(null)
     if (editPreview) URL.revokeObjectURL(editPreview)
@@ -203,6 +205,7 @@ const Menu = () => {
     body.append('description', editForm.description)
     body.append('price', editForm.price)
     body.append('category', editForm.category)
+    body.append('rating', editForm.rating) // blank clears it back to unrated
     if (editImage) body.append('image', editImage)
     const json = await apiFetch('/api/admin/food/edit', { method: 'POST', body })
     setEditSubmitting(false)
@@ -251,7 +254,21 @@ const Menu = () => {
               <input type='number' min='0' value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} required placeholder='20' />
             </div>
           </div>
-          <button type='submit' disabled={submitting}>{submitting ? 'Adding…' : 'Add Item'}</button>
+          <div className='field'>
+            <label htmlFor='add-rating'>Rating</label>
+            <input
+              id='add-rating'
+              type='number'
+              min='0'
+              max='5'
+              step='0.1'
+              value={form.rating}
+              onChange={(e) => setForm({ ...form, rating: e.target.value })}
+              placeholder='Leave blank if unrated'
+            />
+            <span className='field-hint'>0–5. Blank hides the stars on the storefront.</span>
+          </div>
+          <button type='submit' disabled={submitting}>{submitting ? 'Adding…' : 'Add item'}</button>
         </div>
       </form>
 
@@ -272,7 +289,7 @@ const Menu = () => {
         </div>
         <div className='table'>
           <div className='table-row menu-row table-head'>
-            <span>Image</span><span>Name</span><span>Category</span><span>Price</span><span>Actions</span>
+            <span>Image</span><span>Name</span><span>Category</span><span>Rating</span><span>Price</span><span>Actions</span>
           </div>
           {visible.length === 0 && (
             <div className='table-empty'>
@@ -287,6 +304,9 @@ const Menu = () => {
                 {it.disabled && <span className='disabled-badge'>Disabled</span>}
               </span>
               <span className='chip'>{it.category}</span>
+              {it.rating === null || it.rating === undefined
+                ? <span className='rating-none'>Unrated</span>
+                : <span className='rating-cell num'><i aria-hidden='true'>★</i>{it.rating.toFixed(1)}</span>}
               <span className='num'>{money(it.price)}</span>
               <span className='row-actions'>
                 <button type='button' className='icon-btn edit' onClick={() => openEdit(it)} aria-label={`Edit ${it.name}`}>{IconEdit}</button>
@@ -347,6 +367,19 @@ const Menu = () => {
             <div className='field'>
               <label>Price ($)</label>
               <input type='number' min='0' value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} required />
+            </div>
+            <div className='field'>
+              <label htmlFor='edit-rating'>Rating</label>
+              <input
+                id='edit-rating'
+                type='number'
+                min='0'
+                max='5'
+                step='0.1'
+                value={editForm.rating}
+                onChange={(e) => setEditForm({ ...editForm, rating: e.target.value })}
+                placeholder='Unrated'
+              />
             </div>
           </div>
           <div className='modal-actions'>

@@ -1,68 +1,192 @@
-.food-item{
-    width: 100%;
-    margin: auto;
-    border-radius: 15px;
-    box-shadow: 0px 0px 10px #00000015;
-    animation: fadeIn 1s;
-}
-.food-item-image{
-    width: 100%;
-    border-radius: 15px 15px 0px 0px;
-}
-.food-item-info{
-    padding: 20px;
-}
-.food-item-name-rating{
+/* ═══════════════════════════════════════════════════════════════
+   Dish card. Uses the shared --fd-* tokens so the storefront grid
+   matches the cart, checkout and order pages.
+   ═══════════════════════════════════════════════════════════════ */
+
+.food-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    flex-direction: column;
+    background: var(--fd-paper);
+    border: 1px solid var(--fd-line);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--fd-lift);
+    transition: box-shadow .25s ease, border-color .25s ease, transform .25s ease;
+    animation: fadeIn .45s ease;
 }
-.food-item-name-rating p{
-    font-size: 20px;
-    font-weight: 500;
+
+.food-item:hover {
+    border-color: #e5d9d4;
+    transform: translateY(-3px);
+    box-shadow: 0 1px 2px rgba(72, 40, 30, .05), 0 22px 42px -20px rgba(72, 40, 30, .3);
 }
-.food-item-name-rating img{
-    width: 80px;
+
+.food-item :focus-visible {
+    outline: 2px solid var(--fd-accent);
+    outline-offset: 3px;
+    border-radius: 10px;
 }
-.food-item-desc{
-    color: #676767;
-    font-size: 12px;
-    
-}
-.food-item-price{
-    color: tomato;
-    font-size: 22px;
-    font-weight: 500;
-    margin: 10px 0px;
-}
-.food-item-img-container{
+
+.food-item-img-container {
     position: relative;
+    /* Fixed ratio, so a grid of photos with different dimensions doesn't end up
+       ragged-bottomed the way it did with height:auto. */
+    aspect-ratio: 4 / 3;
+    background: var(--fd-muted-soft);
+    overflow: hidden;
 }
-.food-item-img-container .add{
-    width: 35px;
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    cursor: pointer;
-    border-radius: 50%;
-}
-.food-item-img-container .add img{
+
+.food-item-image {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
+    transition: transform .4s cubic-bezier(.22, .8, .3, 1);
 }
-.food-item-counter{
+
+.food-item:hover .food-item-image { transform: scale(1.04); }
+
+/* ── Add / quantity ───────────────────────────────────────── */
+.food-item-add {
     position: absolute;
-    bottom: 15px;
-    right: 15px;
+    bottom: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    background: var(--fd-paper);
+    box-shadow: 0 2px 8px rgba(72, 40, 30, .28);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .18s ease, transform .15s ease;
+}
+
+.food-item-add:hover { background: var(--fd-accent-soft); transform: scale(1.06); }
+.food-item-add:active { transform: scale(1); }
+.food-item-add img { width: 22px; display: block; }
+
+.food-item-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 6px;
-    background-color: white;
-    border-radius: 30px;
+    padding: 6px 8px;
+    background: var(--fd-paper);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(72, 40, 30, .28);
 }
-.food-item-counter img{
-    width: 30px;
+
+.food-item-counter img {
+    width: 26px;
     display: block;
+    transition: transform .15s ease;
+}
+
+.food-item-counter .icon-button:hover img { transform: scale(1.12); }
+
+.food-item-counter p {
+    min-width: 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--fd-ink);
+}
+
+/* ── Info ─────────────────────────────────────────────────── */
+.food-item-info {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 18px 18px;
+    flex: 1;
+}
+
+.food-item-name-rating {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+.food-item-name-rating h3 {
+    font-size: 16.5px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.3;
+    color: var(--fd-ink);
+}
+
+.food-item-desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--fd-ink-2);
+    /* Two lines keeps every card's price on the same baseline. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.food-item-price {
+    margin-top: auto;
+    padding-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.015em;
+    color: var(--fd-ink);
+}
+
+/* ── Stars ────────────────────────────────────────────────── */
+.food-item-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.food-item-stars-track {
+    position: relative;
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    line-height: 1;
+    color: #e6dcd8;
+}
+
+/* Clipped overlay: same string, same metrics, cut to the score's percentage. */
+.food-item-stars-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    color: #f0a02a;
+}
+
+.food-item-stars-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fd-ink-3);
+    font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .food-item,
+    .food-item-image,
+    .food-item-add,
+    .food-item-counter img {
+        animation: none !important;
+        transition-duration: .01ms !important;
+    }
+
+    .food-item:hover { transform: none; }
+    .food-item:hover .food-item-image { transform: none; }
 }

@@ -1,19 +1,57 @@
-.food-display{
-    margin-top: 30px;
+/* ═══════════════════════════════════════════════════════════════
+   Dish grid.
+   ═══════════════════════════════════════════════════════════════ */
+
+.food-display {
+    margin-top: 42px;
 }
-.food-display h2{
-    font-size: max(2vw,24px);
+
+.food-display-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--fd-line);
+}
+
+.food-display h2 {
+    font-size: clamp(22px, 2vw, 30px);
     font-weight: 600;
+    letter-spacing: -0.022em;
+    color: var(--fd-ink);
 }
-.food-display-list{
+
+.food-display-count {
+    font-size: 13.5px;
+    color: var(--fd-ink-3);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.food-display-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
-    margin-top: 30px;
-    gap: 30px;
-    row-gap: 50px;
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    margin-top: 26px;
+    gap: 24px;
 }
-.food-display-empty{
-    margin-top: 30px;
-    color: #777;
-    font-size: 16px;
+
+.food-display-empty {
+    margin-top: 26px;
+    padding: 54px 24px;
+    text-align: center;
+    font-size: 14.5px;
+    color: var(--fd-ink-2);
+    background: var(--fd-paper-2);
+    border: 1px dashed var(--fd-tear);
+    border-radius: 16px;
+}
+
+@media (max-width: 620px) {
+    .food-display { margin-top: 34px; }
+    .food-display-list {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
 }

@@ -13,6 +13,9 @@ const foodSchema = new mongoose.Schema(
     category: { type: String, required: true },
     image: { type: String, required: true }, // filename, e.g. "food_1.png"
     disabled: { type: Boolean, default: false }, // hidden from the storefront when true
+    // Set from the admin panel. null means "not rated yet" — the storefront hides
+    // the stars entirely rather than implying a score nobody gave.
+    rating: { type: Number, min: 0, max: 5, default: null },
   },
   { timestamps: true, _id: false }
 );

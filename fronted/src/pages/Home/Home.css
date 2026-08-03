@@ -1,0 +1,5 @@
+/* Home is a stack of sections; each one owns its own spacing. The bottom
+   margin keeps a gap before the footer, matching the other pages. */
+.home {
+    padding-bottom: 72px;
+}
